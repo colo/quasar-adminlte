@@ -21,6 +21,11 @@ export default {
     this.admin_lte_ui()
   },
   methods: {
+    saveNewOrder: function() {
+      let $sortable = $('.connectedSortable')
+      let positions = JSON.stringify($sortable.sortable("toArray"));
+      localStorage.setItem('positions', positions);
+    },
     // https://stackoverflow.com/questions/44134147/vue-js-removes-jquery-event-handlers
     admin_lte_ui: function () {
       $(document).trigger('vue-loaded')
@@ -30,13 +35,23 @@ export default {
 
       // console.log('admin-lte this.$route',this.$route)
 
+      let $sortable = $('.connectedSortable')
+      var positions = JSON.parse(localStorage.getItem('positions'));
+      if (positions) {
+        $.each(positions, function(i, position) {
+          let $target = $sortable.find('#' + position);
+          $target.appendTo($sortable); // or prependTo for reverse
+        });
+      }
+
       // Make the dashboard widgets sortable Using jquery UI
       $('.connectedSortable').sortable({
         placeholder: 'sort-highlight',
         connectWith: '.connectedSortable',
         handle: '.box-header, .nav-tabs',
         forcePlaceholderSize: true,
-        zIndex: 999999
+        zIndex: 999999,
+        update: this.saveNewOrder
       })
       $('.connectedSortable .box-header, .connectedSortable .nav-tabs-custom').css('cursor', 'move')
 
