@@ -13,22 +13,29 @@
     >
     <template slot-scope="props">
       <VueGridItem :key="index" v-for="(item, index) in props.layout"
-              :i="item.i"
-              :w.sync="item.w"
-              :h.sync="item.h"
-              :x="item.x"
-              :y="item.y"
-              :immobile.sync="item.immobile"
-              :containerWidth="props.containerWidth"
-              :rowHeight="props.rowHeight"
-              :isDraggable="true"
-              :isResizable="true"
-              :className="'grid-item'"
-              :cols="props.cols"
-              :heightFromChildren="false"
-              :maxRows="props.maxRows"
+        :i="item.i"
+        :w.sync="item.w"
+        :h.sync="item.h"
+        :x="item.x"
+        :y="item.y"
+        :immobile.sync="item.immobile"
+        :containerWidth="props.containerWidth"
+        :rowHeight="props.rowHeight"
+        :isDraggable="!preview"
+        :isResizable="!preview"
+        :className="(!preview) ? 'grid-item' : '' "
+        :cols="props.cols"
+        :heightFromChildren="false"
+        :maxRows="props.maxRows"
       >
-          <div>Test</div>
+      <!-- :className="'grid-item'" -->
+        Test {{item.i}}
+        <q-icon
+          name="fa fa-trash"
+          v-if="!preview && !item.immobile"
+          @click="removeItem(index)"
+          style="position: absolute; bottom: 0px; left: 4px;"
+        />
       </VueGridItem>
     </template>
     </VueResponsiveGridLayout>
@@ -59,53 +66,76 @@ export default {
   data () {
     return {
       layouts: {
-        'md': [
-          { x: 0, y: 0, w: 2, h: 3, i: '1' },
-          { x: 2, y: 0, w: 2, h: 3, i: '2' },
-          { x: 4, y: 0, w: 2, h: 3, i: '3' },
-          { x: 0, y: 3, w: 2, h: 3, i: '4' }
+        'lg': [
+          { x: 0, y: 0, w: 10, h: 3, i: '1' },
+          { x: 10, y: 0, w: 2, h: 3, i: '2', immobile: true },
+          { x: 0, y: 1, w: 2, h: 3, i: '3' },
+          { x: 2, y: 1, w: 2, h: 3, i: '4' }
         ]
       },
-      breakpoint: 'md',
-      components: {
-        '1': { i: '1', component: 'example-component', defaultSize: 2 },
-        '2': { i: '2', component: 'example-component', defaultSize: 2 },
-        '3': { i: '3', component: 'example-component', defaultSize: 2 },
-        '4': { i: '4', component: 'example-component', defaultSize: 2 }
-      },
-      cols: 10,
-      breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-      colsAll: { lg: 10, md: 8, sm: 6, xs: 4, xxs: 2 },
-      isDraggable: true,
-      isResizable: true
+      breakpoint: 'lg',
+      // components: {
+      //   '1': { i: '1', component: 'example-component', defaultSize: 2 },
+      //   '2': { i: '2', component: 'example-component', defaultSize: 2 },
+      //   '3': { i: '3', component: 'example-component', defaultSize: 2 },
+      //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
+      // },
+      cols: 12,
+      // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+      // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+
+      // isDraggable: true,
+      // isResizable: true,
+      preview: true
     }
   },
   methods: {
+    removeItem: function (key) {
+      debug('removeItem', key)
+      if (key > -1) {
+        for (const breakpoint in this.layouts) {
+          let layout = this.layouts[breakpoint]
+          layout.splice(key, 1)
+          this.$set(this.layouts, breakpoint, layout)
+        }
+        // let layout = JSON.parse(JSON.stringify(this.layout))
+        // layout.splice(key, 1)
+        // // this.layout.splice(key, 1)
+        // this.layout = layout
+      }
+    },
     onLayoutUpdate (layout, layouts, last) {
+      debug('onLayoutUpdate', layout, layouts, last)
       this.$set(this.layouts, this.breakpoint, layout)
     },
 
     onLayoutChange (layout, layouts, breakpoint) {
+      debug('onLayoutChange', layout, layouts, breakpoint)
       this.$set(this.layouts, breakpoint, layout)
     },
 
     onLayoutInit (layout, layouts, cols, breakpoint) {
+      debug('onLayoutChange', layout, layouts, cols, breakpoint)
       this.cols = cols
       this.breakpoint = breakpoint
       this.$set(this.layouts, breakpoint, layout)
     },
 
     onBreakpointChange (breakpoint) {
+      debug('onLayoutChange', breakpoint)
       this.breakpoint = breakpoint
     },
 
     onWidthChange (width, cols) {
+      debug('onWidthChange', width, cols)
       this.cols = cols
     },
     gridMode () {
+      debug('gridMode')
       this.$refs.layout.resizeAllItems(2, 'vertical')
     },
     listMode () {
+      debug('listMode')
       this.$refs.layout.resizeAllItems(this.cols, 'horizontal')
     }
   }
@@ -114,7 +144,7 @@ export default {
 </script>
 
 <style>
-#app {
+/* #app {
   background: #fff;
   border-radius: 4px;
   transition: all 0.2s;
@@ -133,7 +163,7 @@ body {
   min-height: 100vh;
   transition: all 0.3s;
   width: 100%;
-}
+} */
 
 .resizable-handle {
   position:absolute;
