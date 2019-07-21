@@ -1,9 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VuexPersistence from 'vuex-persist'
 
-// import example from './module-example'
+import grids from './grids'
 
 Vue.use(Vuex)
+
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+  // reducer: state => ({
+  //   app: state.app, hosts : state.hosts, stats: state.stats
+  // }), //only save app module
+  modules: ['grids']
+})
 
 /*
  * If not building with SSR mode, you can
@@ -12,8 +21,9 @@ Vue.use(Vuex)
 
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
+    plugins: [vuexLocal.plugin],
     modules: {
-      // example
+      grids
     },
 
     // enable strict mode (adds overhead!)

@@ -1,141 +1,7 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <!-- <img alt="Quasar logo" src="~assets/quasar-logo-full.svg"> -->
-
-    <!-- <section class="content"> -->
-      <!-- <div class="row">
-        <div class="col-xs-12 col-sm-6 col-lg-6 connectedSortable">
-          <admin-lte-box-solid
-            title="some title"
-            id="some id"
-          >
-            some content
-          </admin-lte-box-solid>
-        </div>
-        <div class="col-xs-12 col-sm-6 col-lg-6 connectedSortable">
-          <admin-lte-box-solid
-            title="some title2"
-            id="some id2"
-          >
-            some content2
-          </admin-lte-box-solid>
-
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12 connectedSortable">
-          <div class="box box-solid">
-            <div class="box-header">
-            </div>
-
-          <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Uploads</span>
-              <span class="info-box-number">13,648</span>
-            </div>
-          </div>
-
-          </div>
-
-        </div>
-
-        <div class="col-xs-12 col-sm-6 col-lg-6 connectedSortable">
-          <admin-lte-box-solid
-            title="some title3"
-            id="some id3"
-          >
-          <q-card flat bordered class="my-card">
-            <q-card-section>
-              <div class="text-h6">Our Changing Planet</div>
-            </q-card-section>
-
-            <q-card-section>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua.
-            </q-card-section>
-
-            <q-separator inset />
-
-            <q-card-section>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua.
-            </q-card-section>
-          </q-card>
-          </admin-lte-box-solid>
-
-        </div>
-      </div> -->
-    <!-- </section> -->
-
-  <div>
-
-    <grid-layout
-    :layout="layout"
-    :col-num="12"
-    :row-height="30"
-    :vertical-compact="true"
-    :is-draggable="isDraggable"
-    :is-resizable="isResizable"
-    :is-mirrored="false"
-    :margin="[5, 5]"
-    :use-css-transforms="true"
-    @layout-updated="layoutUpdatedEvent"
-    >
-
-    <!-- :responsive="true" -->
-    <!-- :breakpoints="{ lg: 1919, md: 1439, sm: 1023, xs: 599, xxs: 0 }"
-    :cols="{ lg: 12, md: 8, sm: 6, xs: 2, xxs: 0 }" -->
-
-    <grid-item
-    v-for="(item, index) in layout"
-    :key="item.i"
-    :x="item.x"
-    :y="item.y"
-    :w="item.w"
-    :h="item.h"
-    :i="item.i"
-    v-bind="item.options"
-    :class="{ 'editMode' : !preview }"
-    :autoSize="true"
-    >
-
-        <div :key="index+'.'+elIndex" v-for="(element, elIndex) in item.elements" class="connectedSortable">
-          <component
-          :is="element.type"
-          v-bind="element.options"
-          v-on="element.events"
-        />
-        <!-- style="position: relative" -->
-
-      </div>
-
-      <q-icon
-      name="fa fa-trash"
-      v-if="!preview && (!item.options || !item.options.static)"
-      @click="removeItem(index)"
-      style="position: absolute; bottom: 0px; left: 4px;"
-      />
-
-        <!-- <resizable>
-
-          <component
-          v-if="item.el"
-          :is="item.el.type"
-          v-bind="item.el.options"
-          v-on="item.el.events"
-          class="absolute-center vertical-center"
-          />
-
-        </resizable> -->
-
-      <!-- </div> -->
-
-    </grid-item>
-    </grid-layout>
-  </div>
+    <grid-view id='test'/>
   </q-page>
 </template>
 
@@ -146,7 +12,7 @@
 
 import admin_lte_mixin from '@components/mixins/adminlte'
 import AdminLteBoxSolid from '@components/adminlte/boxSolid'
-import { GridLayout, GridItem } from 'vue-grid-layout'
+import GridView from '@components/gridView'
 
 export default {
   mixins: [admin_lte_mixin],
@@ -154,148 +20,147 @@ export default {
   name: 'PageIndex',
   components: {
     AdminLteBoxSolid,
-    GridLayout,
-    GridItem
-  },
-
-  data () {
-    return {
-
-      layout: [
-        { 'x': 0,
-          'y': 0,
-          'w': 2,
-          'h': 2,
-          'i': '0',
-          elements: [
-            {
-              type: 'admin-lte-box-solid',
-              options: {
-                title: 'some title',
-                id: 'some id'
-              }
-            }
-            // {
-            //   type: 'admin-lte-box-solid',
-            //   options: {
-            //     title: 'some title2',
-            //     id: 'some id2'
-            //   }
-            // }
-          ]
-          // 'type': 'q-btn',
-          // options: { color: 'white', 'text-color': 'black', label: 'Standard' }
-        },
-        { 'x': 10,
-          'y': 0,
-          'w': 2,
-          'h': 2,
-          'i': '1',
-          // options: {
-          //   static: true
-          // },
-          elements: [
-            // {
-            //   // 'type': 'edit-btn',
-            //   'type': 'q-btn',
-            //   events: { click: this.disableGrid },
-            //   options: {
-            //     round: true,
-            //     color: 'primary'
-            //     // icon: 'shopping_cart',
-            //     // 'v-on': '{ click: disableGrid }',
-            //     // 'v-on:click': '"disableGrid"',
-            //     // 'v-on:click': '$emit("disableGrid")'
-            //     // 'flat': true
-            //   //   'bordered': true
-            //   //   // class: 'bg-grey-9',
-            //   //   // text: 'test' +
-            //   //   // '\nsome more'
-            //   }
-            // }
-            {
-              type: 'admin-lte-box-solid',
-              options: {
-                title: 'some title3',
-                id: 'some id3'
-              }
-            }
-          ]
-
-          // // options: { color: 'white', 'text-color': 'black', label: 'Standard' }
-        }
-        // {
-        //   'x': 1,
-        //   'y': 1,
-        //   'w': 1,
-        //   'h': 2,
-        //   'i': '2',
-        //   elements: []
-        //   // type: 'q-chip',
-        //   // options: {
-        //   //   icon: 'alarm',
-        //   //   label: 'Set alarm'
-        //   // }
-        // }
-        // { 'x': 6, 'y': 0, 'w': 2, 'h': 3, 'i': '3' },
-        // { 'x': 8, 'y': 0, 'w': 2, 'h': 3, 'i': '4' },
-        // { 'x': 10, 'y': 0, 'w': 2, 'h': 3, 'i': '5' },
-        // { 'x': 0, 'y': 5, 'w': 2, 'h': 5, 'i': '6' },
-        // { 'x': 2, 'y': 5, 'w': 2, 'h': 5, 'i': '7' },
-        // { 'x': 4, 'y': 5, 'w': 2, 'h': 5, 'i': '8' },
-        // { 'x': 6, 'y': 4, 'w': 2, 'h': 4, 'i': '9' },
-        // { 'x': 8, 'y': 4, 'w': 2, 'h': 4, 'i': '10' },
-        // { 'x': 10, 'y': 4, 'w': 2, 'h': 4, 'i': '11' },
-        // { 'x': 0, 'y': 10, 'w': 2, 'h': 5, 'i': '12' },
-        // { 'x': 2, 'y': 10, 'w': 2, 'h': 5, 'i': '13' },
-        // { 'x': 4, 'y': 8, 'w': 2, 'h': 4, 'i': '14' },
-        // { 'x': 6, 'y': 8, 'w': 2, 'h': 4, 'i': '15' },
-        // { 'x': 8, 'y': 10, 'w': 2, 'h': 5, 'i': '16' },
-        // { 'x': 10, 'y': 4, 'w': 2, 'h': 2, 'i': '17' },
-        // { 'x': 0, 'y': 9, 'w': 2, 'h': 3, 'i': '18' },
-        // { 'x': 2, 'y': 6, 'w': 2, 'h': 2, 'i': '19' }
-      ],
-
-      isDraggable: false,
-      isResizable: true,
-      preview: false,
-      contenteditable: true
-    }
-  },
-  methods: {
-    removeItem: function (key) {
-      if (key > -1) {
-        this.layout.splice(key, 1)
-      }
-    },
-    layoutUpdatedEvent: function (layout) {
-      console.log('layoutUpdatedEvent ')
-      console.log(layout)
-    },
-    disableGrid: function () {
-      console.log('disableGrid')
-      this.isDraggable = !this.isDraggable
-      this.isResizable = !this.isResizable
-      this.preview = !this.preview
-      this.contenteditable = !this.contenteditable
-    },
-    addToList: function () {
-      console.log('addToList')
-      console.log(arguments)
-    }
-  //   ...mapActions([
-  //     'addTitleGridItem',
-  //     'addContentGridItem',
-  //     'addImageGridItem',
-  //     'removeItem'
-  //   ]),
-    // disableGrid () {
-    //   this.isDraggable = !this.isDraggable
-    //   this.isResizable = !this.isResizable
-    //   this.preview = !this.preview
-    //   this.contenteditable = !this.contenteditable
-    // }
+    GridView
   }
+
+  // data () {
+  //   return {
+  //
+  //     layout: [
+  //       { 'x': 0,
+  //         'y': 0,
+  //         'w': 2,
+  //         'h': 2,
+  //         'i': '0',
+  //         elements: [
+  //           {
+  //             type: 'admin-lte-box-solid',
+  //             options: {
+  //               title: 'some title',
+  //               id: 'some id'
+  //             }
+  //           }
+  //           // {
+  //           //   type: 'admin-lte-box-solid',
+  //           //   options: {
+  //           //     title: 'some title2',
+  //           //     id: 'some id2'
+  //           //   }
+  //           // }
+  //         ]
+  //         // 'type': 'q-btn',
+  //         // options: { color: 'white', 'text-color': 'black', label: 'Standard' }
+  //       },
+  //       { 'x': 10,
+  //         'y': 0,
+  //         'w': 2,
+  //         'h': 2,
+  //         'i': '1',
+  //         // options: {
+  //         //   static: true
+  //         // },
+  //         elements: [
+  //           // {
+  //           //   // 'type': 'edit-btn',
+  //           //   'type': 'q-btn',
+  //           //   events: { click: this.disableGrid },
+  //           //   options: {
+  //           //     round: true,
+  //           //     color: 'primary'
+  //           //     // icon: 'shopping_cart',
+  //           //     // 'v-on': '{ click: disableGrid }',
+  //           //     // 'v-on:click': '"disableGrid"',
+  //           //     // 'v-on:click': '$emit("disableGrid")'
+  //           //     // 'flat': true
+  //           //   //   'bordered': true
+  //           //   //   // class: 'bg-grey-9',
+  //           //   //   // text: 'test' +
+  //           //   //   // '\nsome more'
+  //           //   }
+  //           // }
+  //           {
+  //             type: 'admin-lte-box-solid',
+  //             options: {
+  //               title: 'some title3',
+  //               id: 'some id3'
+  //             }
+  //           }
+  //         ]
+  //
+  //         // // options: { color: 'white', 'text-color': 'black', label: 'Standard' }
+  //       }
+  //       // {
+  //       //   'x': 1,
+  //       //   'y': 1,
+  //       //   'w': 1,
+  //       //   'h': 2,
+  //       //   'i': '2',
+  //       //   elements: []
+  //       //   // type: 'q-chip',
+  //       //   // options: {
+  //       //   //   icon: 'alarm',
+  //       //   //   label: 'Set alarm'
+  //       //   // }
+  //       // }
+  //       // { 'x': 6, 'y': 0, 'w': 2, 'h': 3, 'i': '3' },
+  //       // { 'x': 8, 'y': 0, 'w': 2, 'h': 3, 'i': '4' },
+  //       // { 'x': 10, 'y': 0, 'w': 2, 'h': 3, 'i': '5' },
+  //       // { 'x': 0, 'y': 5, 'w': 2, 'h': 5, 'i': '6' },
+  //       // { 'x': 2, 'y': 5, 'w': 2, 'h': 5, 'i': '7' },
+  //       // { 'x': 4, 'y': 5, 'w': 2, 'h': 5, 'i': '8' },
+  //       // { 'x': 6, 'y': 4, 'w': 2, 'h': 4, 'i': '9' },
+  //       // { 'x': 8, 'y': 4, 'w': 2, 'h': 4, 'i': '10' },
+  //       // { 'x': 10, 'y': 4, 'w': 2, 'h': 4, 'i': '11' },
+  //       // { 'x': 0, 'y': 10, 'w': 2, 'h': 5, 'i': '12' },
+  //       // { 'x': 2, 'y': 10, 'w': 2, 'h': 5, 'i': '13' },
+  //       // { 'x': 4, 'y': 8, 'w': 2, 'h': 4, 'i': '14' },
+  //       // { 'x': 6, 'y': 8, 'w': 2, 'h': 4, 'i': '15' },
+  //       // { 'x': 8, 'y': 10, 'w': 2, 'h': 5, 'i': '16' },
+  //       // { 'x': 10, 'y': 4, 'w': 2, 'h': 2, 'i': '17' },
+  //       // { 'x': 0, 'y': 9, 'w': 2, 'h': 3, 'i': '18' },
+  //       // { 'x': 2, 'y': 6, 'w': 2, 'h': 2, 'i': '19' }
+  //     ],
+  //
+  //     isDraggable: false,
+  //     isResizable: true,
+  //     preview: false,
+  //     contenteditable: true
+  //   }
+  // },
+  // methods: {
+  //   removeItem: function (key) {
+  //     if (key > -1) {
+  //       this.layout.splice(key, 1)
+  //     }
+  //   },
+  //   layoutUpdatedEvent: function (layout) {
+  //     console.log('layoutUpdatedEvent ')
+  //     console.log(layout)
+  //   },
+  //   disableGrid: function () {
+  //     console.log('disableGrid')
+  //     this.isDraggable = !this.isDraggable
+  //     this.isResizable = !this.isResizable
+  //     this.preview = !this.preview
+  //     this.contenteditable = !this.contenteditable
+  //   },
+  //   addToList: function () {
+  //     console.log('addToList')
+  //     console.log(arguments)
+  //   }
+  // //   ...mapActions([
+  // //     'addTitleGridItem',
+  // //     'addContentGridItem',
+  // //     'addImageGridItem',
+  // //     'removeItem'
+  // //   ]),
+  //   // disableGrid () {
+  //   //   this.isDraggable = !this.isDraggable
+  //   //   this.isResizable = !this.isResizable
+  //   //   this.preview = !this.preview
+  //   //   this.contenteditable = !this.contenteditable
+  //   // }
+  // }
 }
 </script>
 
