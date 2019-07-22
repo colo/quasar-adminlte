@@ -39,13 +39,33 @@ export default function () {
         ]
       },
       breakpoint: 'lg',
-      // components: {
-      // // //   '1': { i: '1', component: 'example-component', defaultSize: 2 },
-      //   // '2': { i: '2', component: 'q-btn', defaultSize: 2 }
-      //   '2': { i: '2', component: 'q-btn', slot: '<q-btn round/>', defaultSize: 2 }
-      // // //   '3': { i: '3', component: 'example-component', defaultSize: 2 },
-      // // //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
-      // },
+      // slots: [
+      //   '<q-btn round />'
+      // ],
+      components: {
+        '1': { i: '1', slot: 'hello', defaultSize: 2 },
+        // '2': { i: '2', component: 'q-btn', defaultSize: 2 }
+        '2': {
+          i: '2',
+          component: 'q-btn',
+          // defaultSize: 2,
+          options: {
+            round: true,
+            style: 'position: relative'
+            // '@click': "$emit('disableGrid')"
+          },
+          events: {
+            click: 'disableGrid'
+          }
+          // componentProps: "round color: 'primary'"
+        },
+        '3': {
+          i: '3',
+          component: 'admin-lte-box-solid',
+          defaultSize: 2
+        }
+      // //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
+      },
       cols: 12,
       // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
       // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },

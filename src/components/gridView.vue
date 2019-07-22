@@ -10,6 +10,7 @@
         :breakpoint="grid.breakpoint"
         :cols="grid.cols"
         ref="layout"
+        :useCSSTransforms="true"
     >
       <template slot-scope="props">
         <VueGridItem :key="index" v-for="(item, index) in props.layout"
@@ -28,6 +29,17 @@
           :heightFromChildren="false"
           :maxRows="props.maxRows"
         >
+
+        <component
+          v-if="grid.components[item.i] && grid.components[item.i].component"
+          :is="grid.components[item.i].component"
+          v-bind="grid.components[item.i].options"
+          v-dynamic-events="(grid.components[item.i].events) ? grid.components[item.i].events : {}"
+        />
+        <template v-else-if="grid.components[item.i] && grid.components[item.i].slot">
+          {{grid.components[item.i].slot}}
+        </template>
+
         <!-- :className="'grid-item'" -->
           <!-- Test {{item.i}}
           <component :is="item.component"></component> -->
@@ -74,6 +86,24 @@ export default {
     }
   },
 
+  // https://forum.vuejs.org/t/dynamic-props-and-custom-event-emit-in-dynamic-component/10932
+  directives: {
+    DynamicEvents: {
+      bind: (el, binding, vnode) => {
+        const allEvents = binding.value
+        Object.keys(allEvents).forEach((event) => {
+          // register handler in the dynamic component
+          vnode.componentInstance.$on(event, (eventData) => {
+            const targetEvent = allEvents[event]
+            vnode.context[targetEvent](eventData)
+          })
+        })
+      },
+      unbind: function (el, binding, vnode) {
+        vnode.componentInstance.$off()
+      }
+    }
+  },
   data () {
     return {
       // layouts: {
@@ -134,7 +164,7 @@ export default {
   },
   methods: {
     disableGrid: function () {
-      console.log('disableGrid')
+      debug('disableGrid')
       // this.isDraggable = !this.isDraggable
       // this.isResizable = !this.isResizable
       // this.contenteditable = !this.contenteditable

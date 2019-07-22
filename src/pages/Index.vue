@@ -11,7 +11,7 @@
 <script>
 
 import admin_lte_mixin from '@components/mixins/adminlte'
-import AdminLteBoxSolid from '@components/adminlte/boxSolid'
+
 import GridView from '@components/gridView'
 
 export default {
@@ -19,7 +19,7 @@ export default {
 
   name: 'PageIndex',
   components: {
-    AdminLteBoxSolid,
+    // AdminLteBoxSolid,
     GridView
   }
 
