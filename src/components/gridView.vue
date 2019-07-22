@@ -5,39 +5,50 @@
         @layout-init="onLayoutInit"
         @width-change="onWidthChange"
         @breakpoint-change="onBreakpointChange"
-        :layouts="layouts"
+        :layouts="grid.layouts"
         :compactType="'vertical'"
-        :breakpoint="breakpoint"
-        :cols="cols"
+        :breakpoint="grid.breakpoint"
+        :cols="grid.cols"
         ref="layout"
     >
-    <template slot-scope="props">
-      <VueGridItem :key="index" v-for="(item, index) in props.layout"
-        :i="item.i"
-        :w.sync="item.w"
-        :h.sync="item.h"
-        :x="item.x"
-        :y="item.y"
-        :immobile.sync="item.immobile"
-        :containerWidth="props.containerWidth"
-        :rowHeight="props.rowHeight"
-        :isDraggable="!preview"
-        :isResizable="!preview"
-        :className="(!preview) ? 'grid-item' : '' "
-        :cols="props.cols"
-        :heightFromChildren="false"
-        :maxRows="props.maxRows"
-      >
-      <!-- :className="'grid-item'" -->
-        Test {{item.i}}
-        <q-icon
-          name="fa fa-trash"
-          v-if="!preview && !item.immobile"
-          @click="removeItem(index)"
-          style="position: absolute; bottom: 0px; left: 4px;"
-        />
-      </VueGridItem>
-    </template>
+      <template slot-scope="props">
+        <VueGridItem :key="index" v-for="(item, index) in props.layout"
+          :i="item.i"
+          :w.sync="item.w"
+          :h.sync="item.h"
+          :x="item.x"
+          :y="item.y"
+          :immobile.sync="item.immobile"
+          :containerWidth="props.containerWidth"
+          :rowHeight="props.rowHeight"
+          :isDraggable="!item.immobile"
+          :isResizable="!item.immobile"
+          :className="(!grid.preview) ? 'grid-item' : '' "
+          :cols="props.cols"
+          :heightFromChildren="false"
+          :maxRows="props.maxRows"
+        >
+        <!-- :className="'grid-item'" -->
+          <!-- Test {{item.i}}
+          <component :is="item.component"></component> -->
+          <!-- <div :key="index+'.'+elIndex" v-for="(element, elIndex) in item.elements" class="connectedSortable">
+            <component
+            :is="element.type"
+            v-bind="element.options"
+            v-on="element.events"
+            style="position: relative"
+          />
+
+          </div> -->
+
+          <q-icon
+            name="fa fa-trash"
+            v-if="!grid.preview && !item.immobile"
+            @click="removeItem(index)"
+            style="position: absolute; bottom: 0px; left: 4px;"
+          />
+        </VueGridItem>
+      </template>
     </VueResponsiveGridLayout>
 </template>
 <script>
@@ -65,79 +76,137 @@ export default {
 
   data () {
     return {
-      layouts: {
-        'lg': [
-          { x: 0, y: 0, w: 10, h: 3, i: '1' },
-          { x: 10, y: 0, w: 2, h: 3, i: '2', immobile: true },
-          { x: 0, y: 1, w: 2, h: 3, i: '3' },
-          { x: 2, y: 1, w: 2, h: 3, i: '4' }
-        ]
-      },
-      breakpoint: 'lg',
-      // components: {
-      //   '1': { i: '1', component: 'example-component', defaultSize: 2 },
-      //   '2': { i: '2', component: 'example-component', defaultSize: 2 },
-      //   '3': { i: '3', component: 'example-component', defaultSize: 2 },
-      //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
+      // layouts: {
+      //   'lg': [
+      //     { x: 0, y: 0, w: 10, h: 3, i: '1' },
+      //     { x: 10, y: 0, w: 2, h: 3, i: '2', immobile: true },
+      //     { x: 0, y: 1, w: 2, h: 3, i: '3' },
+      //     { x: 2, y: 1, w: 2, h: 3, i: '4' }
+      //   ]
       // },
-      cols: 12,
-      // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-      // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
-
-      // isDraggable: true,
-      // isResizable: true,
-      preview: true
+      // breakpoint: 'lg',
+      // // components: {
+      // //   '1': { i: '1', component: 'example-component', defaultSize: 2 },
+      // //   '2': { i: '2', component: 'example-component', defaultSize: 2 },
+      // //   '3': { i: '3', component: 'example-component', defaultSize: 2 },
+      // //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
+      // // },
+      // cols: 12,
+      // // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+      // // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+      //
+      // // isDraggable: true,
+      // // isResizable: true,
+      // preview: false
+    }
+  },
+  created: function () {
+    debug('created', this.id)
+    let id = this.id
+    // if (id && !this.$store.state['grid_' + id]) { this.$store.registerModule('grid_' + id, GridStore) }
+    this.$store.commit('grids/addGrid', { id: id })
+  },
+  computed: {
+    // ...mapGetters({
+    //   'getLayout': (state) => {
+    //     return state['grid_' + this.id].getters.getLayout()
+    //   }
+    // }),
+    // getLayout () {
+    //   debug('getLayout', this.$store)
+    //   return this.$store.getters['grid_' + this.id + '/getLayout']
+    // },
+    grid: {
+      get () {
+        debug('get grid', this.$store.getters['grids/getGrid'](this.id))
+        // return JSON.parse(JSON.stringify(this.$store.state['grid_' + this.id].layout))
+        // return JSON.parse(JSON.stringify(this.$store.getters['grids/getLayout'](this.id)))
+        // return this.$store.state.grids[this.id]
+        return JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+      },
+      set (grid) {
+        debug('set grid', this.id, grid)
+        grid.id = this.id
+        this.$store.commit('grids/setGrid', grid)
+        // this.$store.state.grids[this.id].layout = JSON.parse(JSON.stringify(layout))
+      }
     }
   },
   methods: {
+    disableGrid: function () {
+      console.log('disableGrid')
+      // this.isDraggable = !this.isDraggable
+      // this.isResizable = !this.isResizable
+      // this.contenteditable = !this.contenteditable
+      let grid = this.grid
+      grid.preview = !grid.preview
+      this.grid = grid
+    },
     removeItem: function (key) {
       debug('removeItem', key)
       if (key > -1) {
-        for (const breakpoint in this.layouts) {
-          let layout = this.layouts[breakpoint]
+        for (const breakpoint in this.grid.layouts) {
+          let layout = this.grid.layouts[breakpoint]
           layout.splice(key, 1)
-          this.$set(this.layouts, breakpoint, layout)
+          let grid = this.grid
+          grid.layouts[breakpoint] = layout
+          this.grid = grid
+          // this.$set('grid', grid)
+          // this.$set(this.layouts, breakpoint, layout)
         }
-        // let layout = JSON.parse(JSON.stringify(this.layout))
-        // layout.splice(key, 1)
-        // // this.layout.splice(key, 1)
-        // this.layout = layout
       }
     },
     onLayoutUpdate (layout, layouts, last) {
       debug('onLayoutUpdate', layout, layouts, last)
-      this.$set(this.layouts, this.breakpoint, layout)
+      // this.$set(this.layouts, this.breakpoint, layout)
+      let grid = this.grid
+      grid.layouts[grid.breakpoint] = layout
+      this.grid = grid
     },
 
     onLayoutChange (layout, layouts, breakpoint) {
       debug('onLayoutChange', layout, layouts, breakpoint)
-      this.$set(this.layouts, breakpoint, layout)
+      // this.$set(this.layouts, breakpoint, layout)
+      let grid = this.grid
+      grid.layouts[breakpoint] = layout
+      this.grid = grid
     },
 
     onLayoutInit (layout, layouts, cols, breakpoint) {
-      debug('onLayoutChange', layout, layouts, cols, breakpoint)
-      this.cols = cols
-      this.breakpoint = breakpoint
-      this.$set(this.layouts, breakpoint, layout)
+      debug('onLayoutInit', layout, layouts, cols, breakpoint)
+      // this.cols = cols
+      // this.breakpoint = breakpoint
+      // this.$set(this.layouts, breakpoint, layout)
+      let grid = this.grid
+      grid.cols = cols
+      grid.breakpoint = breakpoint
+      grid.layouts[grid.breakpoint] = layout
+      this.grid = grid
     },
 
     onBreakpointChange (breakpoint) {
-      debug('onLayoutChange', breakpoint)
-      this.breakpoint = breakpoint
+      debug('onBreakpointChange', breakpoint)
+      // this.breakpoint = breakpoint
+      let grid = this.grid
+      grid.breakpoint = breakpoint
+      this.grid = grid
     },
 
     onWidthChange (width, cols) {
       debug('onWidthChange', width, cols)
-      this.cols = cols
-    },
-    gridMode () {
-      debug('gridMode')
-      this.$refs.layout.resizeAllItems(2, 'vertical')
-    },
-    listMode () {
-      debug('listMode')
-      this.$refs.layout.resizeAllItems(this.cols, 'horizontal')
+      // this.cols = cols
+      let grid = this.grid
+      grid.cols = cols
+      this.grid = grid
     }
+    // gridMode () {
+    //   debug('gridMode')
+    //   this.$refs.layout.resizeAllItems(2, 'vertical')
+    // },
+    // listMode () {
+    //   debug('listMode')
+    //   this.$refs.layout.resizeAllItems(this.cols, 'horizontal')
+    // }
   }
 
 }

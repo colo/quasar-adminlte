@@ -11,6 +11,10 @@ export function setGrid (state, grid) {
   // if (!grid.layout) { grid.layout = [] }
   const id = grid.id
   delete grid.id
+  // if (state[id]) {
+  //   let newGrid = extend(true, state[id], grid)
+  //   state[id] = newGrid
+  // }
   state[id] = grid
 }
 
