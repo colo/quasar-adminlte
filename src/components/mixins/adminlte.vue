@@ -2,6 +2,12 @@
 /* eslint-disable */
 import '@components/adminlte/index'
 
+import * as Debug from 'debug'
+const debug = Debug('components:AdminLte')
+
+import Vue from 'vue';
+export const EventBus = new Vue();
+
 export default {
   name: 'admin-lte-mixin',
 
@@ -11,6 +17,7 @@ export default {
 
   data () {
     return {
+      EventBus: EventBus
     }
   },
 
@@ -21,11 +28,13 @@ export default {
     this.admin_lte_ui()
   },
   methods: {
-    // saveNewOrder: function() {
-    //   let $sortable = $('.connectedSortable')
-    //   let positions = JSON.stringify($sortable.sortable("toArray"));
-    //   localStorage.setItem('positions', positions);
-    // },
+    saveNewOrder: function(e, ui) {
+      debug('saveNewOrder', e, ui)
+      this.EventBus.$emit('sortable', [e,ui])
+    //   // let $sortable = $('.connectedSortable')
+    //   // let positions = JSON.stringify($sortable.sortable("toArray"));
+    //   // localStorage.setItem('positions', positions);
+    },
     // https://stackoverflow.com/questions/44134147/vue-js-removes-jquery-event-handlers
     admin_lte_ui: function () {
       $(document).trigger('vue-loaded')
@@ -51,7 +60,8 @@ export default {
         handle: '.box-header, .nav-tabs',
         forcePlaceholderSize: true,
         zIndex: 999999,
-        update: this.saveNewOrder
+        update: this.saveNewOrder.bind(this)
+        // update: (e, ui) => this.$emit('sortable', [e,ui])
       })
       $('.connectedSortable .box-header, .connectedSortable .nav-tabs-custom').css('cursor', 'move')
 

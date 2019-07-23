@@ -22,23 +22,24 @@
           :immobile.sync="item.immobile"
           :containerWidth="props.containerWidth"
           :rowHeight="props.rowHeight"
-          :isDraggable="!item.immobile"
-          :isResizable="!item.immobile"
-          :className="(!grid.preview) ? 'grid-item' : '' "
+          :isDraggable="grid.isDraggable"
+          :isResizable="grid.isResizable"
+          :className="(grid.preview) ? 'grid-item' : '' "
           :cols="props.cols"
           :heightFromChildren="false"
           :maxRows="props.maxRows"
         >
-
-        <component
-          v-if="grid.components[item.i] && grid.components[item.i].component"
-          :is="grid.components[item.i].component"
-          v-bind="grid.components[item.i].options"
-          v-dynamic-events="(grid.components[item.i].events) ? grid.components[item.i].events : {}"
-        />
-        <template v-else-if="grid.components[item.i] && grid.components[item.i].slot">
-          {{grid.components[item.i].slot}}
-        </template>
+          <div v-if="grid.components[item.i]" class="connectedSortable" :id="'sortable.'+item.i">
+            <component
+              v-if="grid.components[item.i] && grid.components[item.i].component"
+              :is="grid.components[item.i].component"
+              v-bind="grid.components[item.i].options"
+              v-dynamic-events="(grid.components[item.i].events) ? grid.components[item.i].events : {}"
+            />
+            <template v-else-if="grid.components[item.i] && grid.components[item.i].slot">
+              {{grid.components[item.i].slot}}
+            </template>
+          </div>
 
         <!-- :className="'grid-item'" -->
           <!-- Test {{item.i}}
@@ -55,7 +56,7 @@
 
           <q-icon
             name="fa fa-trash"
-            v-if="!grid.preview && !item.immobile"
+            v-if="grid.preview && !item.immobile"
             @click="removeItem(index)"
             style="position: absolute; bottom: 0px; left: 4px;"
           />
@@ -75,15 +76,16 @@ import { VueResponsiveGridLayout, VueGridItem } from 'vue-responsive-grid-layout
 import { mapState, mapGetters } from 'vuex'
 
 export default {
-  name: 'gridview',
+  name: 'GridView',
   // components: { GridLayout, GridItem, TextWidget, TextAreaWidget, ImageWidget },
   components: { VueResponsiveGridLayout, VueGridItem },
 
   props: {
     id: {
-      type: [String],
-      default: ''
-    }
+      type: [String]
+      // default: ''
+    },
+    EventBus: undefined
   },
 
   // https://forum.vuejs.org/t/dynamic-props-and-custom-event-emit-in-dynamic-component/10932
@@ -104,48 +106,18 @@ export default {
       }
     }
   },
-  data () {
-    return {
-      // layouts: {
-      //   'lg': [
-      //     { x: 0, y: 0, w: 10, h: 3, i: '1' },
-      //     { x: 10, y: 0, w: 2, h: 3, i: '2', immobile: true },
-      //     { x: 0, y: 1, w: 2, h: 3, i: '3' },
-      //     { x: 2, y: 1, w: 2, h: 3, i: '4' }
-      //   ]
-      // },
-      // breakpoint: 'lg',
-      // // components: {
-      // //   '1': { i: '1', component: 'example-component', defaultSize: 2 },
-      // //   '2': { i: '2', component: 'example-component', defaultSize: 2 },
-      // //   '3': { i: '3', component: 'example-component', defaultSize: 2 },
-      // //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
-      // // },
-      // cols: 12,
-      // // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-      // // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
-      //
-      // // isDraggable: true,
-      // // isResizable: true,
-      // preview: false
-    }
-  },
+
   created: function () {
     debug('created', this.id)
     let id = this.id
     // if (id && !this.$store.state['grid_' + id]) { this.$store.registerModule('grid_' + id, GridStore) }
     this.$store.commit('grids/addGrid', { id: id })
+    this.EventBus.$on('sortable', function (e, ui) {
+      debug('$on sortable', e, ui)
+    })
   },
+
   computed: {
-    // ...mapGetters({
-    //   'getLayout': (state) => {
-    //     return state['grid_' + this.id].getters.getLayout()
-    //   }
-    // }),
-    // getLayout () {
-    //   debug('getLayout', this.$store)
-    //   return this.$store.getters['grid_' + this.id + '/getLayout']
-    // },
     grid: {
       get () {
         debug('get grid', this.$store.getters['grids/getGrid'](this.id))
@@ -165,11 +137,22 @@ export default {
   methods: {
     disableGrid: function () {
       debug('disableGrid')
-      // this.isDraggable = !this.isDraggable
-      // this.isResizable = !this.isResizable
-      // this.contenteditable = !this.contenteditable
+
       let grid = this.grid
-      grid.preview = !grid.preview
+      grid.preview = grid.isDraggable = grid.isResizable = !grid.preview
+      // grid.isDraggable = !grid.isDraggable
+      // grid.isResizable = !grid.isResizable
+      // grid.contenteditable = !grid.contenteditable
+      this.grid = grid
+    },
+    disableEdit: function () {
+      debug('disableEdit')
+
+      let grid = this.grid
+      // grid.preview = !grid.preview
+      grid.isDraggable = !grid.isDraggable
+      grid.isResizable = !grid.isResizable
+      // grid.contenteditable = !grid.contenteditable
       this.grid = grid
     },
     removeItem: function (key) {

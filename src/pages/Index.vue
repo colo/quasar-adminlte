@@ -1,7 +1,7 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <grid-view id='test'/>
+    <grid-view id='test' :EventBus="EventBus"/>
   </q-page>
 </template>
 
@@ -9,6 +9,8 @@
 </style>
 
 <script>
+import * as Debug from 'debug'
+const debug = Debug('pages:Index')
 
 import admin_lte_mixin from '@components/mixins/adminlte'
 
@@ -21,6 +23,12 @@ export default {
   components: {
     // AdminLteBoxSolid,
     GridView
+  },
+
+  created: function () {
+    this.EventBus.$on('sortable', function (e, ui) {
+      debug('$on sortable', e, ui)
+    })
   }
 
   // data () {
