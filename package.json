@@ -15,6 +15,7 @@
     "admin-lte": "^2.4.15",
     "axios": "^0.18.1",
     "debug": "^4.1.1",
+    "jquery": "^3.4.1",
     "jquery-slimscroll": "^1.3.8",
     "lodash": "^4.17.15",
     "quasar": "^1.0.0",
@@ -23,6 +24,7 @@
     "vue-i18n": "^8.0.0",
     "vue-responsive-grid-layout": "^1.1.8",
     "vue2-storage": "^4.0.5",
+    "vuedraggable": "^2.23.0",
     "vuex-persist": "^2.0.1"
   },
   "devDependencies": {

@@ -2,45 +2,6 @@ export default function () {
   return {
     // all: {},
     _default: {
-      layouts: {
-        'lg': [
-          { x: 0, y: 0, w: 5, h: 4, i: '1' },
-          { x: 5, y: 0, w: 5, h: 4, i: '2' },
-          {
-            x: 10,
-            y: 0,
-            w: 1,
-            h: 4,
-            i: '3',
-            immobile: true
-          },
-          { x: 11,
-            y: 0,
-            w: 1,
-            h: 4,
-            i: '4',
-            immobile: true
-          },
-          { x: 0, y: 1, w: 5, h: 4, i: '5' },
-          { x: 5, y: 1, w: 7, h: 4, i: '6' }
-        ]
-      },
-      breakpoint: 'lg',
-      // slots: [
-      //   '<q-btn round />'
-      // ],
-
-      cols: 12,
-      // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-      // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
-
-      isDraggable: false,
-      isResizable: false,
-      preview: false
-    },
-
-    components: {},
-    _components: {
 
       '1': [{
         id: 0,
@@ -81,6 +42,7 @@ export default function () {
       }]
     // //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
     }
+
     // _default: {
     //   layout: [
     //     { 'x': 0,

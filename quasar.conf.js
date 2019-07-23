@@ -98,16 +98,16 @@ module.exports = function (ctx) {
         }
 
         /**
-        * jQuery
+        * jQuery (admin-lte)
         **/
         cfg.plugins.push(
           new ProvidePlugin({
              $: "jquery",
              jQuery: "jquery",
-             "window.jQuery": "jquery'",
-             "window.$": "jquery"
+             // "window.jQuery": "jquery'",
+             // "window.$": "jquery"
          })
-       )
+        )
       }
     },
 

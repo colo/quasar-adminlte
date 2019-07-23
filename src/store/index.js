@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
 import grids from './grids'
+import components from './components'
 
 Vue.use(Vuex)
 
@@ -11,7 +12,7 @@ const vuexLocal = new VuexPersistence({
   // reducer: state => ({
   //   app: state.app, hosts : state.hosts, stats: state.stats
   // }), //only save app module
-  modules: ['grids']
+  modules: ['grids', 'components']
 })
 
 /*
@@ -23,7 +24,8 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     plugins: [vuexLocal.plugin],
     modules: {
-      grids
+      grids,
+      components
     },
 
     // enable strict mode (adds overhead!)

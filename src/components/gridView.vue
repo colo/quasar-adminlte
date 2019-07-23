@@ -34,17 +34,33 @@
           :maxRows="props.maxRows"
         >
           <!-- <div v-if="grid.components[item.i]" class="connectedSortable"> -->
-          <section :class="'col-'+grid.breakpoint+' connectedSortable'" :id="item.i">
-            <component
-              v-if="grid.components[item.i] && grid.components[item.i].component"
-              :is="grid.components[item.i].component"
-              v-bind="grid.components[item.i].options"
-              v-dynamic-events="(grid.components[item.i].events) ? grid.components[item.i].events : {}"
-            />
-            <template v-else-if="grid.components[item.i] && grid.components[item.i].slot">
-              {{grid.components[item.i].slot}}
-            </template>
-          </section>
+          <!-- <section :class="'col-'+grid.breakpoint+' connectedSortable'" :id="item.i" v-if="grid.components[item.i]"> -->
+           <draggable
+            class="list-group"
+            :id="item.i"
+            :list="components[item.i]" group="components"
+            @add="addComponent"
+            @remove="removeComponent"
+            @change="log"
+            >
+             <div
+              class="list-group-item"
+              v-for="(widget, wIndex) in components[item.i]"
+              :key="item.i+'.'+wIndex"
+              :id="item.i+'.'+wIndex"
+            >
+              <component
+                v-if="widget.component"
+                :is="widget.component"
+                v-bind="widget.options"
+                v-dynamic-events="(widget.events) ? widget.events : {}"
+              />
+              <template v-else-if="widget.slot" >
+                {{widget.slot}}
+              </template>
+            </div>
+          </draggable>
+          <!-- </section> -->
           <!-- </div> -->
 
         <!-- :className="'grid-item'" -->
@@ -81,13 +97,14 @@
 import * as Debug from 'debug'
 const debug = Debug('components:gridView')
 
+import draggable from 'vuedraggable'
 import { VueResponsiveGridLayout, VueGridItem } from 'vue-responsive-grid-layout'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'GridView',
   // components: { GridLayout, GridItem, TextWidget, TextAreaWidget, ImageWidget },
-  components: { VueResponsiveGridLayout, VueGridItem },
+  components: { VueResponsiveGridLayout, VueGridItem, draggable },
 
   props: {
     id: {
@@ -116,15 +133,37 @@ export default {
     }
   },
 
+  // data: function () {
+  //   return {
+  //     components: {}
+  //   }
+  // },
   created: function () {
     debug('created', this.id)
     let id = this.id
     // if (id && !this.$store.state['grid_' + id]) { this.$store.registerModule('grid_' + id, GridStore) }
     this.$store.commit('grids/addGrid', { id: id })
+    this.$store.commit('components/addComponents', { id: id })
+    // this.components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+    //
+    // this.$watch('this.components', function (val, oldVal) {
+    //   debug('watch components', this.id, val)
+    //   val.id = this.id
+    //   this.$store.commit('components/setComponents', JSON.parse(JSON.stringify(val)))
+    // })
+
     this.EventBus.$on('sortable', function (e, ui) {
       debug('$on sortable', e, ui)
     })
   },
+  // watch: {
+  //   components: function (val, oldVal) {
+  //     debug('watch components', this.id, val)
+  //     val.id = this.id
+  //     this.$store.commit('components/setComponents', JSON.parse(JSON.stringify(val)))
+  //   }
+  //
+  // },
 
   computed: {
     grid: {
@@ -141,9 +180,53 @@ export default {
         this.$store.commit('grids/setGrid', grid)
         // this.$store.state.grids[this.id].layout = JSON.parse(JSON.stringify(layout))
       }
+    },
+    components: {
+      get () {
+        debug('get components', this.id)
+        // let grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+        // let components = this.$store.state.grids.components
+        // return components[this.id]
+        return JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+      },
+      set (components) {
+        debug('set components', this.id, components)
+        components.id = this.id
+        // components = JSON.parse(JSON.stringify(components))
+        // // grid.components = components
+        this.$store.commit('components/setComponents', components)
+      }
     }
   },
   methods: {
+    addComponent: function (evt) {
+      // let grid_id = evt.to.substring(evt.to.indexOf('.'))
+      let from = evt.item.id.split('.')[0]
+      let old_index = evt.item.id.split('.')[1]
+      let new_index = evt.newIndex
+      debug('addComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
+      let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+
+      debug('addComponent components', components)
+      components[evt.to.id] = (components[evt.to.id]) ? components[evt.to.id] : []
+      components[evt.to.id].splice(new_index, 0, components[from][old_index])
+      // this.components = components
+      components.id = this.id
+      this.$store.commit('components/setComponents', components)
+    },
+    removeComponent: function (evt) {
+      let from = evt.item.id.split('.')[0]
+      let old_index = evt.item.id.split('.')[1]
+      let new_index = evt.newIndex
+      debug('removeComponent', evt, evt.to.id, evt.item.id, from, old_index, new_index)
+      let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+
+      debug('removeComponent components', components)
+      components[evt.from.id].splice(old_index, 1)
+      // this.components = components
+      components.id = this.id
+      this.$store.commit('components/setComponents', components)
+    },
     disableGrid: function () {
       debug('disableGrid')
 
@@ -220,6 +303,9 @@ export default {
       let grid = this.grid
       grid.cols = cols
       this.grid = grid
+    },
+    log: function (evt) {
+      window.console.log(evt)
     }
     // gridMode () {
     //   debug('gridMode')
