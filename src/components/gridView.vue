@@ -1,4 +1,6 @@
 <template>
+  <section class="content">
+
     <VueResponsiveGridLayout
         @layout-update="onLayoutUpdate"
         @layout-change="onLayoutChange"
@@ -11,7 +13,9 @@
         :cols="grid.cols"
         ref="layout"
         :useCSSTransforms="true"
+        :class="'row'"
     >
+
       <template slot-scope="props">
         <VueGridItem :key="index" v-for="(item, index) in props.layout"
           :i="item.i"
@@ -29,7 +33,8 @@
           :heightFromChildren="false"
           :maxRows="props.maxRows"
         >
-          <div v-if="grid.components[item.i]" class="connectedSortable" :id="'sortable.'+item.i">
+          <!-- <div v-if="grid.components[item.i]" class="connectedSortable"> -->
+          <section :class="'col-'+grid.breakpoint+' connectedSortable'" :id="item.i">
             <component
               v-if="grid.components[item.i] && grid.components[item.i].component"
               :is="grid.components[item.i].component"
@@ -39,7 +44,8 @@
             <template v-else-if="grid.components[item.i] && grid.components[item.i].slot">
               {{grid.components[item.i].slot}}
             </template>
-          </div>
+          </section>
+          <!-- </div> -->
 
         <!-- :className="'grid-item'" -->
           <!-- Test {{item.i}}
@@ -62,7 +68,10 @@
           />
         </VueGridItem>
       </template>
+
     </VueResponsiveGridLayout>
+
+  </section>
 </template>
 <script>
 // import { mapGetters, mapActions } from 'vuex'

@@ -4,23 +4,25 @@ export default function () {
     _default: {
       layouts: {
         'lg': [
-          { x: 0, y: 0, w: 10, h: 3, i: '1' },
+          { x: 0, y: 0, w: 5, h: 4, i: '1' },
+          { x: 5, y: 0, w: 5, h: 4, i: '2' },
           {
             x: 10,
             y: 0,
             w: 1,
-            h: 3,
-            i: '2',
+            h: 4,
+            i: '3',
             immobile: true
           },
           { x: 11,
             y: 0,
             w: 1,
-            h: 3,
-            i: '3',
+            h: 4,
+            i: '4',
             immobile: true
           },
-          { x: 2, y: 1, w: 2, h: 3, i: '4' }
+          { x: 0, y: 1, w: 5, h: 4, i: '5' },
+          { x: 5, y: 1, w: 7, h: 4, i: '6' }
         ]
       },
       breakpoint: 'lg',
@@ -28,10 +30,14 @@ export default function () {
       //   '<q-btn round />'
       // ],
       components: {
-        '1': { i: '1', slot: 'hello', defaultSize: 2 },
-        // '2': { i: '2', component: 'q-btn', defaultSize: 2 }
-        '2': {
-          i: '2',
+        // '1': { i: '1', slot: 'hello', defaultSize: 2 },
+        '1': {
+          i: '1',
+          component: 'admin-lte-box-solid'
+          // defaultSize: 2
+        },
+        '3': {
+          i: '3',
           component: 'q-btn',
           // defaultSize: 2,
           options: {
@@ -44,8 +50,8 @@ export default function () {
           }
           // componentProps: "round color: 'primary'"
         },
-        '3': {
-          i: '3',
+        '4': {
+          i: '4',
           component: 'q-btn',
           // defaultSize: 2,
           options: {
@@ -58,10 +64,10 @@ export default function () {
           }
           // componentProps: "round color: 'primary'"
         },
-        '4': {
-          i: '4',
-          component: 'admin-lte-box-solid',
-          defaultSize: 2
+        '5': {
+          i: '5',
+          component: 'admin-lte-box-solid'
+          // defaultSize: 2
         }
       // //   '4': { i: '4', component: 'example-component', defaultSize: 2 }
       },
