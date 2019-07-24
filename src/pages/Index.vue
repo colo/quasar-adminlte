@@ -31,6 +31,13 @@ export default {
   //   // })
   // }
   created: function () {
+    let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+    let grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+
+    if (components) { this.components = components }
+
+    if (grid) { this.grid = grid }
+
     // debug('created', this.id)
     // let id = this.id
     //
@@ -113,20 +120,20 @@ export default {
           }
           // componentProps: "round color: 'primary'"
         }],
-        // '4': [{
-        //   component: 'q-btn',
-        //   // defaultSize: 2,
-        //   options: {
-        //     // round: true,
-        //     label: 'draggables',
-        //     style: 'position: relative'
-        //     // '@click': "$emit('disableGrid')"
-        //   },
-        //   events: {
-        //     click: 'disableEdit'
-        //   }
-        //   // componentProps: "round color: 'primary'"
-        // }],
+        '4': [{
+          component: 'q-btn',
+          // defaultSize: 2,
+          options: {
+            // round: true,
+            label: 'draggables',
+            style: 'position: relative'
+            // '@click': "$emit('disableGrid')"
+          },
+          events: {
+            click: 'disableEdit'
+          }
+          // componentProps: "round color: 'primary'"
+        }],
         '5': [{
           component: 'admin-lte-box-solid'
           // defaultSize: 2
