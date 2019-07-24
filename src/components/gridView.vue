@@ -51,9 +51,10 @@
               :key="item.i+'.'+wIndex"
               :id="item.i+'.'+wIndex"
             >
+
               <component
                 v-if="widget.component"
-                :is="getComponent(widget.component)"
+                :is="resolveComponent(widget.component)"
                 v-bind="widget.options"
                 v-dynamic-events="(widget.events) ? widget.events : {}"
               />
@@ -200,6 +201,12 @@ export default {
       this.$store.commit('components/addComponents', components)
     }
 
+    // for (const id in this.viewComponents) {
+    //   for (const i in this.viewComponents[id]) {
+    //     if (this.viewComponents[id][i].component) { this.resolveComponent(this.viewComponents[id][i].component) }
+    //   }
+    // }
+
     // this.viewComponents = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
     //
     // this.$watch('this.viewComponents', function (val, oldVal) {
@@ -277,11 +284,11 @@ export default {
     }
   },
   methods: {
-    getComponent: function (component) {
-      debug('getComponent', component)
+    resolveComponent: function (component) {
+      debug('resolveComponent', component)
 
-      debug('getComponent locals', this.$options.components)
-      debug('getComponent globals', Vue.options.components)
+      debug('resolveComponent locals', this.$options.components)
+      debug('resolveComponent globals', Vue.options.components)
       let exists = false
       // locals
       if (this.$options.components[component]) {
@@ -289,7 +296,7 @@ export default {
       } else {
         for (const name in this.$options.components) {
           let _component = this.$options.components[name]
-          // debug('getComponent _component local', _component)
+          // debug('resolveComponent _component local', _component)
           if (_component.name && _component.name === component) { exists = true }
           if (_component.extendOptions && _component.extendOptions.name === component) { exists = true }
         }
@@ -300,16 +307,30 @@ export default {
           } else {
             for (const name in Vue.options.components) {
               let _component = Vue.options.components[name]
-              // debug('getComponent _component global', _component)
+              // debug('resolveComponent _component global', _component)
               if (_component.name && _component.name === component) { exists = true }
               if (_component.extendOptions && _component.extendOptions.name === component) { exists = true }
             }
           }
         }
       }
-      // debug('getComponent globals', Vue.$options.components)
+      // debug('resolveComponent globals', Vue.$options.components)
       if (exists === false) {
-        return () => import('@components/test/' + component)
+        // return () => import('@components/test/' + component)
+        // Vue.component(
+        //   component,
+        //   // The `import` function returns a Promise.
+        //   () => import('@components/' + this.componentsDir + '/' + component + '.vue')
+        // )
+
+        // https://vuejs.org/v2/guide/components-dynamic-async.html
+
+        Vue.component(component, function (resolve) {
+          // This special require syntax will instruct Webpack to
+          // automatically split your built code into bundles which
+          // are loaded over Ajax requests.
+          require(['@components/' + this.componentsDir + '/' + component + '.vue'], resolve)
+        }.bind(this))
         // return require('@components/' + this.componentsDir + '/' + component + '.vue')
       } else {
         return component

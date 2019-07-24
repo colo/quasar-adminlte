@@ -1,8 +1,10 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <grid-view :id="id" :components="components" :grid="grid" />
+    <grid-view :id="id" :components="components" :grid="grid" componentsDir="test"/>
     <!-- componentsDir="test" -->
+
+    <test />
   </q-page>
 </template>
 
@@ -17,6 +19,8 @@ import admin_lte_mixin from '@components/mixins/adminlte'
 
 import GridView from '@components/gridView'
 
+// import Test from '@components/test/test.vue'
+
 export default {
   mixins: [admin_lte_mixin],
 
@@ -24,6 +28,7 @@ export default {
   components: {
     // AdminLteBoxSolid,
     GridView
+    // Test
   },
 
   // created: function () {
