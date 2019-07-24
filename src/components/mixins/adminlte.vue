@@ -5,8 +5,8 @@ import '@components/adminlte/index'
 import * as Debug from 'debug'
 const debug = Debug('components:AdminLte')
 
-import Vue from 'vue';
-export const EventBus = new Vue();
+// import Vue from 'vue';
+// export const EventBus = new Vue();
 
 export default {
   name: 'admin-lte-mixin',
@@ -17,7 +17,7 @@ export default {
 
   data () {
     return {
-      EventBus: EventBus
+      // EventBus: EventBus
     }
   },
 
@@ -60,7 +60,7 @@ export default {
         handle: '.box-header, .nav-tabs',
         forcePlaceholderSize: true,
         zIndex: 999999,
-        update: this.saveNewOrder.bind(this)
+        // update: this.saveNewOrder.bind(this)
         // update: (e, ui) => this.$emit('sortable', [e,ui])
       })
       $('.connectedSortable .box-header, .connectedSortable .nav-tabs-custom').css('cursor', 'move')

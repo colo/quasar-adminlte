@@ -14,7 +14,8 @@ export default function () {
         component: 'q-btn',
         // defaultSize: 2,
         options: {
-          round: true,
+          // round: true,
+          label: 'edit/preview',
           style: 'position: relative'
           // '@click': "$emit('disableGrid')"
         },
@@ -27,7 +28,8 @@ export default function () {
         component: 'q-btn',
         // defaultSize: 2,
         options: {
-          round: true,
+          // round: true,
+          label: 'draggables',
           style: 'position: relative'
           // '@click': "$emit('disableGrid')"
         },

@@ -1,7 +1,7 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <grid-view id='test' :EventBus="EventBus"/>
+    <grid-view :id="id" :components="components" :grid="grid"/>
   </q-page>
 </template>
 
@@ -25,150 +25,118 @@ export default {
     GridView
   },
 
-  created: function () {
-    this.EventBus.$on('sortable', function (e, ui) {
-      debug('$on sortable', e, ui)
-    })
-  }
-
-  // data () {
-  //   return {
-  //
-  //     layout: [
-  //       { 'x': 0,
-  //         'y': 0,
-  //         'w': 2,
-  //         'h': 2,
-  //         'i': '0',
-  //         elements: [
-  //           {
-  //             type: 'admin-lte-box-solid',
-  //             options: {
-  //               title: 'some title',
-  //               id: 'some id'
-  //             }
-  //           }
-  //           // {
-  //           //   type: 'admin-lte-box-solid',
-  //           //   options: {
-  //           //     title: 'some title2',
-  //           //     id: 'some id2'
-  //           //   }
-  //           // }
-  //         ]
-  //         // 'type': 'q-btn',
-  //         // options: { color: 'white', 'text-color': 'black', label: 'Standard' }
-  //       },
-  //       { 'x': 10,
-  //         'y': 0,
-  //         'w': 2,
-  //         'h': 2,
-  //         'i': '1',
-  //         // options: {
-  //         //   static: true
-  //         // },
-  //         elements: [
-  //           // {
-  //           //   // 'type': 'edit-btn',
-  //           //   'type': 'q-btn',
-  //           //   events: { click: this.disableGrid },
-  //           //   options: {
-  //           //     round: true,
-  //           //     color: 'primary'
-  //           //     // icon: 'shopping_cart',
-  //           //     // 'v-on': '{ click: disableGrid }',
-  //           //     // 'v-on:click': '"disableGrid"',
-  //           //     // 'v-on:click': '$emit("disableGrid")'
-  //           //     // 'flat': true
-  //           //   //   'bordered': true
-  //           //   //   // class: 'bg-grey-9',
-  //           //   //   // text: 'test' +
-  //           //   //   // '\nsome more'
-  //           //   }
-  //           // }
-  //           {
-  //             type: 'admin-lte-box-solid',
-  //             options: {
-  //               title: 'some title3',
-  //               id: 'some id3'
-  //             }
-  //           }
-  //         ]
-  //
-  //         // // options: { color: 'white', 'text-color': 'black', label: 'Standard' }
-  //       }
-  //       // {
-  //       //   'x': 1,
-  //       //   'y': 1,
-  //       //   'w': 1,
-  //       //   'h': 2,
-  //       //   'i': '2',
-  //       //   elements: []
-  //       //   // type: 'q-chip',
-  //       //   // options: {
-  //       //   //   icon: 'alarm',
-  //       //   //   label: 'Set alarm'
-  //       //   // }
-  //       // }
-  //       // { 'x': 6, 'y': 0, 'w': 2, 'h': 3, 'i': '3' },
-  //       // { 'x': 8, 'y': 0, 'w': 2, 'h': 3, 'i': '4' },
-  //       // { 'x': 10, 'y': 0, 'w': 2, 'h': 3, 'i': '5' },
-  //       // { 'x': 0, 'y': 5, 'w': 2, 'h': 5, 'i': '6' },
-  //       // { 'x': 2, 'y': 5, 'w': 2, 'h': 5, 'i': '7' },
-  //       // { 'x': 4, 'y': 5, 'w': 2, 'h': 5, 'i': '8' },
-  //       // { 'x': 6, 'y': 4, 'w': 2, 'h': 4, 'i': '9' },
-  //       // { 'x': 8, 'y': 4, 'w': 2, 'h': 4, 'i': '10' },
-  //       // { 'x': 10, 'y': 4, 'w': 2, 'h': 4, 'i': '11' },
-  //       // { 'x': 0, 'y': 10, 'w': 2, 'h': 5, 'i': '12' },
-  //       // { 'x': 2, 'y': 10, 'w': 2, 'h': 5, 'i': '13' },
-  //       // { 'x': 4, 'y': 8, 'w': 2, 'h': 4, 'i': '14' },
-  //       // { 'x': 6, 'y': 8, 'w': 2, 'h': 4, 'i': '15' },
-  //       // { 'x': 8, 'y': 10, 'w': 2, 'h': 5, 'i': '16' },
-  //       // { 'x': 10, 'y': 4, 'w': 2, 'h': 2, 'i': '17' },
-  //       // { 'x': 0, 'y': 9, 'w': 2, 'h': 3, 'i': '18' },
-  //       // { 'x': 2, 'y': 6, 'w': 2, 'h': 2, 'i': '19' }
-  //     ],
-  //
-  //     isDraggable: false,
-  //     isResizable: true,
-  //     preview: false,
-  //     contenteditable: true
-  //   }
-  // },
-  // methods: {
-  //   removeItem: function (key) {
-  //     if (key > -1) {
-  //       this.layout.splice(key, 1)
-  //     }
-  //   },
-  //   layoutUpdatedEvent: function (layout) {
-  //     console.log('layoutUpdatedEvent ')
-  //     console.log(layout)
-  //   },
-  //   disableGrid: function () {
-  //     console.log('disableGrid')
-  //     this.isDraggable = !this.isDraggable
-  //     this.isResizable = !this.isResizable
-  //     this.preview = !this.preview
-  //     this.contenteditable = !this.contenteditable
-  //   },
-  //   addToList: function () {
-  //     console.log('addToList')
-  //     console.log(arguments)
-  //   }
-  // //   ...mapActions([
-  // //     'addTitleGridItem',
-  // //     'addContentGridItem',
-  // //     'addImageGridItem',
-  // //     'removeItem'
-  // //   ]),
-  //   // disableGrid () {
-  //   //   this.isDraggable = !this.isDraggable
-  //   //   this.isResizable = !this.isResizable
-  //   //   this.preview = !this.preview
-  //   //   this.contenteditable = !this.contenteditable
-  //   // }
+  // created: function () {
+  //   // this.EventBus.$on('sortable', function (e, ui) {
+  //   //   debug('$on sortable', e, ui)
+  //   // })
   // }
+  created: function () {
+    // debug('created', this.id)
+    // let id = this.id
+    //
+    // this.$store.commit('grids/addGrid', { id: id })
+    // this.$store.commit('components/addComponents', { id: id })
+  },
+
+  data () {
+    return {
+      id: 'test',
+      grid: {
+        layouts: {
+          'lg': [
+            { x: 0,
+              y: 0,
+              w: 5,
+              h: 4,
+              i: '1'
+
+            },
+            { x: 5, y: 0, w: 5, h: 4, i: '2' },
+            {
+              x: 10,
+              y: 0,
+              w: 1,
+              h: 4,
+              i: '3',
+              immobile: true
+            },
+            { x: 11,
+              y: 0,
+              w: 1,
+              h: 4,
+              i: '4',
+              immobile: true
+            },
+            { x: 0,
+              y: 1,
+              w: 5,
+              h: 4,
+              i: '5'
+
+            }
+            // { x: 5, y: 1, w: 7, h: 4, i: '6' }
+          ]
+        },
+        breakpoint: 'lg',
+        // slots: [
+        //   '<q-btn round />'
+        // ],
+
+        cols: 12,
+        // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+        // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+
+        isDraggable: false,
+        isResizable: false,
+        preview: false
+      },
+      components: {
+        '1': [{
+          id: 0,
+          component: 'admin-lte-box-solid'
+          // defaultSize: 2
+        }],
+        '2': [
+          { id: 2, slot: 'hello', defaultSize: 2 }
+        ],
+        '3': [{
+          component: 'q-btn',
+          // defaultSize: 2,
+          options: {
+            // round: true,
+            label: 'edit/preview',
+            style: 'position: relative'
+            // '@click': "$emit('disableGrid')"
+          },
+          events: {
+            click: 'disableGrid'
+          }
+          // componentProps: "round color: 'primary'"
+        }],
+        // '4': [{
+        //   component: 'q-btn',
+        //   // defaultSize: 2,
+        //   options: {
+        //     // round: true,
+        //     label: 'draggables',
+        //     style: 'position: relative'
+        //     // '@click': "$emit('disableGrid')"
+        //   },
+        //   events: {
+        //     click: 'disableEdit'
+        //   }
+        //   // componentProps: "round color: 'primary'"
+        // }],
+        '5': [{
+          component: 'admin-lte-box-solid'
+          // defaultSize: 2
+        }]
+      }
+    }
+  },
+  methods: {
+
+  }
 }
 </script>
 

@@ -1,5 +1,4 @@
 <template>
-  <section class="content">
 
     <VueResponsiveGridLayout
         @layout-update="onLayoutUpdate"
@@ -7,10 +6,10 @@
         @layout-init="onLayoutInit"
         @width-change="onWidthChange"
         @breakpoint-change="onBreakpointChange"
-        :layouts="grid.layouts"
+        :layouts="viewGrid.layouts"
         :compactType="'vertical'"
-        :breakpoint="grid.breakpoint"
-        :cols="grid.cols"
+        :breakpoint="viewGrid.breakpoint"
+        :cols="viewGrid.cols"
         ref="layout"
         :useCSSTransforms="true"
         :class="'row'"
@@ -26,26 +25,28 @@
           :immobile.sync="item.immobile"
           :containerWidth="props.containerWidth"
           :rowHeight="props.rowHeight"
-          :isDraggable="grid.isDraggable"
-          :isResizable="grid.isResizable"
-          :className="(grid.preview) ? 'grid-item' : '' "
+          :isDraggable="viewGrid.isDraggable"
+          :isResizable="viewGrid.isResizable"
+          :className="(viewGrid.preview) ? 'grid-item' : '' "
           :cols="props.cols"
           :heightFromChildren="false"
           :maxRows="props.maxRows"
         >
-          <!-- <div v-if="grid.components[item.i]" class="connectedSortable"> -->
-          <!-- <section :class="'col-'+grid.breakpoint+' connectedSortable'" :id="item.i" v-if="grid.components[item.i]"> -->
+          <!-- <div v-if="viewGrid.components[item.i]" class="connectedSortable"> -->
+          <!-- <section :class="'col-'+viewGrid.breakpoint+' connectedSortable'" :id="item.i" v-if="viewGrid.components[item.i]"> -->
+
            <draggable
+            v-if="!item.immobile"
             class="list-group"
             :id="item.i"
-            :list="components[item.i]" group="components"
+            :list="viewComponents[item.i]" group="components"
             @add="addComponent"
             @remove="removeComponent"
             @change="log"
             >
+              <!-- class="list-group-item" -->
              <div
-              class="list-group-item"
-              v-for="(widget, wIndex) in components[item.i]"
+              v-for="(widget, wIndex) in viewComponents[item.i]"
               :key="item.i+'.'+wIndex"
               :id="item.i+'.'+wIndex"
             >
@@ -60,6 +61,24 @@
               </template>
             </div>
           </draggable>
+          <!--  not draggables (inmobile)-->
+          <div
+           v-else
+           v-for="(widget, wIndex) in viewComponents[item.i]"
+           :key="item.i+'.'+wIndex"
+           :id="item.i+'.'+wIndex"
+         >
+           <component
+             v-if="widget.component"
+             :is="widget.component"
+             v-bind="widget.options"
+             v-dynamic-events="(widget.events) ? widget.events : {}"
+           />
+           <template v-else-if="widget.slot" >
+             {{widget.slot}}
+           </template>
+         </div>
+
           <!-- </section> -->
           <!-- </div> -->
 
@@ -78,7 +97,7 @@
 
           <q-icon
             name="fa fa-trash"
-            v-if="grid.preview && !item.immobile"
+            v-if="viewGrid.preview && !item.immobile"
             @click="removeItem(index)"
             style="position: absolute; bottom: 0px; left: 4px;"
           />
@@ -87,7 +106,6 @@
 
     </VueResponsiveGridLayout>
 
-  </section>
 </template>
 <script>
 // import { mapGetters, mapActions } from 'vuex'
@@ -111,7 +129,19 @@ export default {
       type: [String]
       // default: ''
     },
-    EventBus: undefined
+    components: {
+      type: [Object],
+      default: function () {
+        return {}
+      }
+    },
+    grid: {
+      type: [Object],
+      default: function () {
+        return {}
+      }
+    }
+    // EventBus: undefined
   },
 
   // https://forum.vuejs.org/t/dynamic-props-and-custom-event-emit-in-dynamic-component/10932
@@ -142,19 +172,38 @@ export default {
     debug('created', this.id)
     let id = this.id
     // if (id && !this.$store.state['grid_' + id]) { this.$store.registerModule('grid_' + id, GridStore) }
-    this.$store.commit('grids/addGrid', { id: id })
-    this.$store.commit('components/addComponents', { id: id })
-    // this.components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+
+    let grid = {}
+    if (this.grid) {
+      grid = JSON.parse(JSON.stringify(this.grid))
+      grid.id = this.id
+      this.viewGrid = grid
+    } else {
+      grid.id = this.id
+      this.$store.commit('grids/addGrid', grid)
+    }
+
+    let components = {}
+    if (this.components) {
+      components = JSON.parse(JSON.stringify(this.components))
+      components.id = this.id
+      this.viewComponents = components
+    } else {
+      components.id = this.id
+      this.$store.commit('components/addComponents', components)
+    }
+
+    // this.viewComponents = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
     //
-    // this.$watch('this.components', function (val, oldVal) {
+    // this.$watch('this.viewComponents', function (val, oldVal) {
     //   debug('watch components', this.id, val)
     //   val.id = this.id
     //   this.$store.commit('components/setComponents', JSON.parse(JSON.stringify(val)))
     // })
 
-    this.EventBus.$on('sortable', function (e, ui) {
-      debug('$on sortable', e, ui)
-    })
+    // this.EventBus.$on('sortable', function (e, ui) {
+    //   debug('$on sortable', e, ui)
+    // })
   },
   // watch: {
   //   components: function (val, oldVal) {
@@ -166,36 +215,44 @@ export default {
   // },
 
   computed: {
-    grid: {
+    viewGrid: {
       get () {
-        debug('get grid', this.$store.getters['grids/getGrid'](this.id))
+        debug('get viewGrid', this.$store.getters['grids/getGrid'](this.id))
         // return JSON.parse(JSON.stringify(this.$store.state['grid_' + this.id].layout))
         // return JSON.parse(JSON.stringify(this.$store.getters['grids/getLayout'](this.id)))
         // return this.$store.state.grids[this.id]
         return JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
       },
       set (grid) {
-        debug('set grid', this.id, grid)
+        debug('set viewGrid', this.id, grid)
         grid.id = this.id
         this.$store.commit('grids/setGrid', grid)
         // this.$store.state.grids[this.id].layout = JSON.parse(JSON.stringify(layout))
       }
     },
-    components: {
+    viewComponents: {
       get () {
-        debug('get components', this.id)
+        debug('get viewComponents', this.id)
         // let grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
         // let components = this.$store.state.grids.components
         // return components[this.id]
         return JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
       },
       set (components) {
-        debug('set components', this.id, components)
+        debug('set viewComponents', this.id, components)
         components.id = this.id
         // components = JSON.parse(JSON.stringify(components))
         // // grid.components = components
         this.$store.commit('components/setComponents', components)
       }
+    }
+  },
+  watch: {
+    components: function (val) {
+      debug('watch components', val)
+    },
+    grid: function (val) {
+      debug('watch grid', val)
     }
   },
   methods: {
@@ -210,7 +267,7 @@ export default {
       debug('addComponent components', components)
       components[evt.to.id] = (components[evt.to.id]) ? components[evt.to.id] : []
       components[evt.to.id].splice(new_index, 0, components[from][old_index])
-      // this.components = components
+      // this.viewComponents = components
       components.id = this.id
       this.$store.commit('components/setComponents', components)
     },
@@ -223,39 +280,39 @@ export default {
 
       debug('removeComponent components', components)
       components[evt.from.id].splice(old_index, 1)
-      // this.components = components
+      // this.viewComponents = components
       components.id = this.id
       this.$store.commit('components/setComponents', components)
     },
     disableGrid: function () {
       debug('disableGrid')
 
-      let grid = this.grid
+      let grid = this.viewGrid
       grid.preview = grid.isDraggable = grid.isResizable = !grid.preview
       // grid.isDraggable = !grid.isDraggable
       // grid.isResizable = !grid.isResizable
       // grid.contenteditable = !grid.contenteditable
-      this.grid = grid
+      this.viewGrid = grid
     },
     disableEdit: function () {
       debug('disableEdit')
 
-      let grid = this.grid
+      let grid = this.viewGrid
       // grid.preview = !grid.preview
       grid.isDraggable = !grid.isDraggable
       grid.isResizable = !grid.isResizable
       // grid.contenteditable = !grid.contenteditable
-      this.grid = grid
+      this.viewGrid = grid
     },
     removeItem: function (key) {
       debug('removeItem', key)
       if (key > -1) {
-        for (const breakpoint in this.grid.layouts) {
-          let layout = this.grid.layouts[breakpoint]
+        for (const breakpoint in this.viewGrid.layouts) {
+          let layout = this.viewGrid.layouts[breakpoint]
           layout.splice(key, 1)
-          let grid = this.grid
+          let grid = this.viewGrid
           grid.layouts[breakpoint] = layout
-          this.grid = grid
+          this.viewGrid = grid
           // this.$set('grid', grid)
           // this.$set(this.layouts, breakpoint, layout)
         }
@@ -264,17 +321,17 @@ export default {
     onLayoutUpdate (layout, layouts, last) {
       debug('onLayoutUpdate', layout, layouts, last)
       // this.$set(this.layouts, this.breakpoint, layout)
-      let grid = this.grid
+      let grid = this.viewGrid
       grid.layouts[grid.breakpoint] = layout
-      this.grid = grid
+      this.viewGrid = grid
     },
 
     onLayoutChange (layout, layouts, breakpoint) {
       debug('onLayoutChange', layout, layouts, breakpoint)
       // this.$set(this.layouts, breakpoint, layout)
-      let grid = this.grid
+      let grid = this.viewGrid
       grid.layouts[breakpoint] = layout
-      this.grid = grid
+      this.viewGrid = grid
     },
 
     onLayoutInit (layout, layouts, cols, breakpoint) {
@@ -282,27 +339,27 @@ export default {
       // this.cols = cols
       // this.breakpoint = breakpoint
       // this.$set(this.layouts, breakpoint, layout)
-      let grid = this.grid
+      let grid = this.viewGrid
       grid.cols = cols
       grid.breakpoint = breakpoint
       grid.layouts[grid.breakpoint] = layout
-      this.grid = grid
+      this.viewGrid = grid
     },
 
     onBreakpointChange (breakpoint) {
       debug('onBreakpointChange', breakpoint)
       // this.breakpoint = breakpoint
-      let grid = this.grid
+      let grid = this.viewGrid
       grid.breakpoint = breakpoint
-      this.grid = grid
+      this.viewGrid = grid
     },
 
     onWidthChange (width, cols) {
       debug('onWidthChange', width, cols)
       // this.cols = cols
-      let grid = this.grid
+      let grid = this.viewGrid
       grid.cols = cols
-      this.grid = grid
+      this.viewGrid = grid
     },
     log: function (evt) {
       window.console.log(evt)
