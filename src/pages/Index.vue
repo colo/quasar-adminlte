@@ -38,6 +38,15 @@ export default {
 
     if (grid) { this.grid = grid }
 
+    let interval = setInterval(function () {
+      debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
+      // let lg = JSON.parse(JSON.stringify(this.grid.layouts.lg))
+      // lg.push({ x: 5, y: 1, w: 7, h: 4, i: '6' })
+      // this.$set(this.grid['layouts'], 'lg', lg)
+      this.grid.layouts.lg.push({ x: 5, y: 1, w: 7, h: 4, i: '6' })
+      debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
+      clearInterval(interval)
+    }.bind(this), 5000)
     // debug('created', this.id)
     // let id = this.id
     //

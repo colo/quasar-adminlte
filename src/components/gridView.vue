@@ -248,11 +248,25 @@ export default {
     }
   },
   watch: {
-    components: function (val) {
-      debug('watch components', val)
+    components: {
+      immediate: true,
+      deep: true,
+      handler: function (components) {
+        debug('watch components', components)
+        components = JSON.parse(JSON.stringify(components))
+        components.id = this.id
+        this.viewComponents = components
+      }
     },
-    grid: function (val) {
-      debug('watch grid', val)
+    grid: {
+      immediate: true,
+      deep: true,
+      handler: function (grid) {
+        debug('watch grid', grid)
+        grid = JSON.parse(JSON.stringify(grid))
+        grid.id = this.id
+        this.viewGrid = grid
+      }
     }
   },
   methods: {
