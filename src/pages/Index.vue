@@ -1,7 +1,8 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <grid-view :id="id" :components="components" :grid="grid"/>
+    <grid-view :id="id" :components="components" :grid="grid" />
+    <!-- componentsDir="test" -->
   </q-page>
 </template>
 
@@ -136,7 +137,8 @@ export default {
           // componentProps: "round color: 'primary'"
         }],
         '5': [{
-          component: 'admin-lte-box-solid'
+          // component: 'admin-lte-box-solid'
+          component: 'test'
           // defaultSize: 2
         }]
       }

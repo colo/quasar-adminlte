@@ -53,7 +53,7 @@
             >
               <component
                 v-if="widget.component"
-                :is="widget.component"
+                :is="getComponent(widget.component)"
                 v-bind="widget.options"
                 v-dynamic-events="(widget.events) ? widget.events : {}"
               />
@@ -113,6 +113,8 @@
 // import TextWidget from './TextWidget'
 // import TextAreaWidget from './TextAreaWidget'
 // import ImageWidget from './ImageWidget'
+import Vue from 'vue'
+
 import * as Debug from 'debug'
 const debug = Debug('components:gridView')
 
@@ -129,6 +131,10 @@ export default {
     id: {
       type: [String]
       // default: ''
+    },
+    componentsDir: {
+      type: [String],
+      default: ''
     },
     components: {
       type: [Object],
@@ -271,6 +277,44 @@ export default {
     }
   },
   methods: {
+    getComponent: function (component) {
+      debug('getComponent', component)
+
+      debug('getComponent locals', this.$options.components)
+      debug('getComponent globals', Vue.options.components)
+      let exists = false
+      // locals
+      if (this.$options.components[component]) {
+        exists = true
+      } else {
+        for (const name in this.$options.components) {
+          let _component = this.$options.components[name]
+          // debug('getComponent _component local', _component)
+          if (_component.name && _component.name === component) { exists = true }
+          if (_component.extendOptions && _component.extendOptions.name === component) { exists = true }
+        }
+
+        if (exists === false) {
+          if (Vue.options.components[component]) {
+            exists = true
+          } else {
+            for (const name in Vue.options.components) {
+              let _component = Vue.options.components[name]
+              // debug('getComponent _component global', _component)
+              if (_component.name && _component.name === component) { exists = true }
+              if (_component.extendOptions && _component.extendOptions.name === component) { exists = true }
+            }
+          }
+        }
+      }
+      // debug('getComponent globals', Vue.$options.components)
+      if (exists === false) {
+        return () => import('@components/test/' + component)
+        // return require('@components/' + this.componentsDir + '/' + component + '.vue')
+      } else {
+        return component
+      }
+    },
     addComponent: function (evt) {
       // let grid_id = evt.to.substring(evt.to.indexOf('.'))
       let from = evt.item.id.split('.')[0]
