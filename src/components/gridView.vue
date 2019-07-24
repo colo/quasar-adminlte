@@ -12,7 +12,8 @@
         :cols="viewGrid.cols"
         ref="layout"
         :useCSSTransforms="true"
-        :class="'row'"
+        :breakpoints="viewGrid.breakpoints"
+        :colsAll="viewGrid.colsAll"
     >
 
       <template slot-scope="props">
@@ -320,6 +321,7 @@ export default {
     },
     removeItem: function (key) {
       debug('removeItem', key)
+      // if (key > -1) {
       if (key > -1) {
         for (const breakpoint in this.viewGrid.layouts) {
           let layout = this.viewGrid.layouts[breakpoint]
@@ -407,6 +409,13 @@ body {
 }
 
 #content {
+  padding: 0px 20px;
+  min-height: 100vh;
+  transition: all 0.3s;
+  width: 100%;
+} */
+
+/* #content {
   padding: 0px 20px;
   min-height: 100vh;
   transition: all 0.3s;

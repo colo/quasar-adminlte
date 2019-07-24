@@ -43,8 +43,9 @@ export default function () {
       // ],
 
       cols: 12,
-      // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-      // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+      breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+      // breakpoints: { lg: 1919, md: 1439, sm: 1023, xs: 599, xxs: 0 } //quasar
+      colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
 
       isDraggable: false,
       isResizable: false,
