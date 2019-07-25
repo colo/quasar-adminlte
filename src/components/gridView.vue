@@ -135,10 +135,10 @@ export default {
       type: [String]
       // default: ''
     },
-    componentsDir: {
-      type: [String, Array],
-      default: ''
-    },
+    // componentsDir: {
+    //   type: [String, Array],
+    //   default: ''
+    // },
     components: {
       type: [Object],
       default: function () {
@@ -327,6 +327,7 @@ export default {
 
         // https://vuejs.org/v2/guide/components-dynamic-async.html
 
+        // https://webpack.js.org/guides/dependency-management/#require-context
         const requireComponent = require.context(
           // Look for files in the current directory
           '@components/',
@@ -336,15 +337,11 @@ export default {
           /[\w-]+\.vue$/
         )
 
-        let resolver = function (component, dir) {
-          debug('resolver', component, dir)
-
-          // https://webpack.js.org/guides/dependency-management/#require-context
-
+        let resolver = function (component) {
           // For each matching file name...
           requireComponent.keys().forEach((fileName) => {
             // Get the component config
-            debug('resolver', component, dir, fileName)
+            // debug('resolver', component, dir, fileName)
             const componentConfig = requireComponent(fileName)
             // Get the PascalCase version of the component name
             const componentName = upperFirst(
@@ -358,7 +355,11 @@ export default {
             )
             // Globally register the component
             // console.log('componentName')
-            Vue.component(componentName, componentConfig.default || componentConfig)
+
+            if (componentName === component) {
+              debug('resolver', component, fileName, componentName)
+              Vue.component(componentName, componentConfig.default || componentConfig)
+            }
           // Vue.component(component, function (resolve) {
           //   // This special require syntax will instruct Webpack to
           //   // automatically split your built code into bundles which
@@ -369,13 +370,13 @@ export default {
           // Vue.component(component, '@components/' + dir + '/' + component + '.vue')
         }
 
-        if (Array.isArray(this.componentsDir)) {
-          for (let i in this.componentsDir) {
-            resolver(component, this.componentsDir[i])
-          }
-        } else {
-          resolver(component, this.componentsDir)
-        }
+        // if (Array.isArray(this.componentsDir)) {
+        //   for (let i in this.componentsDir) {
+        //     resolver(component, this.componentsDir[i])
+        //   }
+        // } else {
+        resolver(component)
+        // }
 
         // return require('@components/' + this.componentsDir + '/' + component + '.vue')
       } else {

@@ -1,7 +1,7 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <grid-view :id="id" :components="components" :grid="grid" :componentsDir="['test', 'second']"/>
+    <grid-view :id="id" :components="components" :grid="grid" />
     <!-- componentsDir="test" -->
 
   </q-page>
