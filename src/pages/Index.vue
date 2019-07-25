@@ -119,7 +119,10 @@ export default {
           options: {
             type: 'box-success',
             title: 'MyBox',
-            text: 'box content'
+            body: {
+              text: 'box content'
+            },
+            footer: false
           }
           // defaultSize: 2
         }],

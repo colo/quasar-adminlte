@@ -1,8 +1,8 @@
 <template>
   <!-- solid sales graph -->
   <div class="box" :class="type" :id="id">
-    <div v-if="header == true" class="box-header" :class="(headerBorder) ? 'with-border' : ''">
-      <i class="fa fa-th"></i>
+    <div v-if="header" class="box-header" :class="(header.border) ? 'with-border' : ''">
+      <i :class="header.icon"></i>
 
       <h3 v-if="title != ''" class="box-title">{{title}}</h3>
 
@@ -13,20 +13,33 @@
         </button>
       </div>
     </div>
-    <div class="box-body border-radius-none">
+    <div class="box-body" :class="body.class">
       <component
-        v-if="component"
-        :is="component.type"
-        v-bind="component.options"
-        v-dynamic-events="(component.events) ? component.events : {}"
+        v-if="body.component"
+        :is="body.component.type"
+        v-bind="body.component.options"
+        v-dynamic-events="(body.component.events) ? body.component.events : {}"
       >
       </component>
-      <template v-else-if="text">
-        {{text}}
+      <template v-else-if="body.text">
+        {{body.text}}
       </template>
       <slot v-else></slot>
     </div>
     <!-- /.box-body -->
+    <div v-if="footer" class="box-footer" :class="footer.class">
+      <component
+        v-if="footer.component"
+        :is="footer.component.type"
+        v-bind="footer.component.options"
+        v-dynamic-events="(footer.component.events) ? footer.component.events : {}"
+      >
+      </component>
+      <template v-else-if="footer.text">
+        {{footer.text}}
+      </template>
+      <slot v-else></slot>
+    </div>
 
     <!-- <div class="box-footer no-border">
       <div class="row">
@@ -87,21 +100,35 @@ export default {
       default: true
     },
     header: {
-      type: [Boolean],
-      default: true
+      type: [Object, Boolean],
+      default: function () {
+        return {
+          border: true,
+          icon: 'fa fa-th'
+        }
+      }
     },
-    headerBorder: {
-      type: [Boolean],
-      default: true
-    },
-    text: {
-      type: [String],
-      default: undefined
-    },
-    component: {
+    body: {
       type: [Object],
-      defualt: function () { return undefined }
+      default: function () {
+        return {
+          class: 'border-radius-none',
+          text: undefined,
+          component: undefined
+        }
+      }
+    },
+    footer: {
+      type: [Object, Boolean],
+      default: function () {
+        return {
+          class: 'box-comments',
+          text: undefined,
+          component: undefined
+        }
+      }
     }
+
   },
 
   data () {
