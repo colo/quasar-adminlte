@@ -1,10 +1,9 @@
 <template>
   <!-- <q-page class="flex flex-center"> -->
   <q-page>
-    <grid-view :id="id" :components="components" :grid="grid" componentsDir="test"/>
+    <grid-view :id="id" :components="components" :grid="grid" :componentsDir="['test', 'second']"/>
     <!-- componentsDir="test" -->
 
-    <test />
   </q-page>
 </template>
 
@@ -143,7 +142,12 @@ export default {
         }],
         '5': [{
           // component: 'admin-lte-box-solid'
-          component: 'test'
+          component: 'TestTest'
+          // defaultSize: 2
+        }],
+        '6': [{
+          // component: 'admin-lte-box-solid'
+          component: 'SecondSecond'
           // defaultSize: 2
         }]
       }

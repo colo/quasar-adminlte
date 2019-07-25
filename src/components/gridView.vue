@@ -114,6 +114,8 @@
 // import TextWidget from './TextWidget'
 // import TextAreaWidget from './TextAreaWidget'
 // import ImageWidget from './ImageWidget'
+import upperFirst from 'lodash/upperFirst'
+import camelCase from 'lodash/camelCase'
 import Vue from 'vue'
 
 import * as Debug from 'debug'
@@ -134,7 +136,7 @@ export default {
       // default: ''
     },
     componentsDir: {
-      type: [String],
+      type: [String, Array],
       default: ''
     },
     components: {
@@ -325,12 +327,56 @@ export default {
 
         // https://vuejs.org/v2/guide/components-dynamic-async.html
 
-        Vue.component(component, function (resolve) {
-          // This special require syntax will instruct Webpack to
-          // automatically split your built code into bundles which
-          // are loaded over Ajax requests.
-          require(['@components/' + this.componentsDir + '/' + component + '.vue'], resolve)
-        }.bind(this))
+        const requireComponent = require.context(
+          // Look for files in the current directory
+          '@components/',
+          // Do not look in subdirectories
+          true,
+          // Only include "_base-" prefixed .vue files
+          /[\w-]+\.vue$/
+        )
+
+        let resolver = function (component, dir) {
+          debug('resolver', component, dir)
+
+          // https://webpack.js.org/guides/dependency-management/#require-context
+
+          // For each matching file name...
+          requireComponent.keys().forEach((fileName) => {
+            // Get the component config
+            debug('resolver', component, dir, fileName)
+            const componentConfig = requireComponent(fileName)
+            // Get the PascalCase version of the component name
+            const componentName = upperFirst(
+              camelCase(
+                fileName
+                  // Remove the "./_" from the beginning
+                  // .replace(/^\.\/_/, '')
+                  // Remove the file extension from the end
+                  .replace(/\.\w+$/, '')
+              )
+            )
+            // Globally register the component
+            // console.log('componentName')
+            Vue.component(componentName, componentConfig.default || componentConfig)
+          // Vue.component(component, function (resolve) {
+          //   // This special require syntax will instruct Webpack to
+          //   // automatically split your built code into bundles which
+          //   // are loaded over Ajax requests.
+          //   require(['@components/' + dir + '/' + component + '.vue'], resolve)
+          // })
+          })
+          // Vue.component(component, '@components/' + dir + '/' + component + '.vue')
+        }
+
+        if (Array.isArray(this.componentsDir)) {
+          for (let i in this.componentsDir) {
+            resolver(component, this.componentsDir[i])
+          }
+        } else {
+          resolver(component, this.componentsDir)
+        }
+
         // return require('@components/' + this.componentsDir + '/' + component + '.vue')
       } else {
         return component
