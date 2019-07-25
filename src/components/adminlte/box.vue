@@ -1,7 +1,7 @@
 <template>
   <!-- solid sales graph -->
-  <div class="box box-solid" :id="id">
-    <div v-if="header == true" class="box-header">
+  <div class="box" :class="type" :id="id">
+    <div v-if="header == true" class="box-header" :class="(headerBorder) ? 'with-border' : ''">
       <i class="fa fa-th"></i>
 
       <h3 v-if="title != ''" class="box-title">{{title}}</h3>
@@ -14,7 +14,17 @@
       </div>
     </div>
     <div class="box-body border-radius-none">
-      <slot></slot>
+      <component
+        v-if="component"
+        :is="component.type"
+        v-bind="component.options"
+        v-dynamic-events="(component.events) ? component.events : {}"
+      >
+      </component>
+      <template v-else-if="text">
+        {{text}}
+      </template>
+      <slot v-else></slot>
     </div>
     <!-- /.box-body -->
 
@@ -53,12 +63,20 @@
 /* global $ */
 
 export default {
-  name: 'admin-lte-box-solid',
+  name: 'admin-lte-box',
 
   props: {
     id: {
       type: [String],
       default: ''
+    },
+    type: {
+      type: [String],
+      /**
+      * collapsed-box
+      * box-default | box-success | box-warning | box-danger
+      **/
+      default: 'box-default box-solid'
     },
     title: {
       type: [String],
@@ -71,6 +89,18 @@ export default {
     header: {
       type: [Boolean],
       default: true
+    },
+    headerBorder: {
+      type: [Boolean],
+      default: true
+    },
+    text: {
+      type: [String],
+      default: undefined
+    },
+    component: {
+      type: [Object],
+      defualt: function () { return undefined }
     }
   },
 

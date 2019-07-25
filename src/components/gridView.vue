@@ -1,5 +1,6 @@
 <template>
-
+<!-- <div class="content-wrapper">
+<section class="content"> -->
     <VueResponsiveGridLayout
         @layout-update="onLayoutUpdate"
         @layout-change="onLayoutChange"
@@ -15,8 +16,8 @@
         :breakpoints="viewGrid.breakpoints"
         :colsAll="viewGrid.colsAll"
     >
-
       <template slot-scope="props">
+
         <VueGridItem :key="index" v-for="(item, index) in props.layout"
           :i="item.i"
           :w.sync="item.w"
@@ -32,6 +33,7 @@
           :cols="props.cols"
           :heightFromChildren="false"
           :maxRows="props.maxRows"
+          :class="'col-'+viewGrid.breakpoint+'-'+viewGrid.colsAll[viewGrid.breakpoint]"
         >
           <!-- <div v-if="viewGrid.components[item.i]" class="connectedSortable"> -->
           <!-- <section :class="'col-'+viewGrid.breakpoint+' connectedSortable'" :id="item.i" v-if="viewGrid.components[item.i]"> -->
@@ -98,16 +100,19 @@
           </div> -->
 
           <q-icon
-            name="fa fa-trash"
+            name="fa fa-trash-alt"
             v-if="viewGrid.preview && !item.immobile"
             @click="removeItem(index)"
             style="position: absolute; bottom: 0px; left: 4px;"
           />
         </VueGridItem>
+
       </template>
 
     </VueResponsiveGridLayout>
 
+  <!-- </section>
+</div> -->
 </template>
 <script>
 // import { mapGetters, mapActions } from 'vuex'
@@ -203,6 +208,12 @@ export default {
       this.$store.commit('components/addComponents', components)
     }
 
+    // for (const index in this.viewComponents) {
+    //   for (const i in this.viewComponents[index]) {
+    //     this.resolveComponent(this.viewComponents[index][i])
+    //   }
+    // }
+
     // for (const id in this.viewComponents) {
     //   for (const i in this.viewComponents[id]) {
     //     if (this.viewComponents[id][i].component) { this.resolveComponent(this.viewComponents[id][i].component) }
@@ -270,6 +281,11 @@ export default {
       handler: function (components) {
         debug('watch components', components)
         components = JSON.parse(JSON.stringify(components))
+        // for (const index in components) {
+        //   for (const i in components[index]) {
+        //     this.resolveComponent(components[index][i])
+        //   }
+        // }
         components.id = this.id
         this.viewComponents = components
       }
@@ -287,10 +303,10 @@ export default {
   },
   methods: {
     resolveComponent: function (component) {
-      debug('resolveComponent', component)
-
-      debug('resolveComponent locals', this.$options.components)
-      debug('resolveComponent globals', Vue.options.components)
+      // debug('resolveComponent', component)
+      //
+      // debug('resolveComponent locals', this.$options.components)
+      // debug('resolveComponent globals', Vue.options.components)
       let exists = false
       // locals
       if (this.$options.components[component]) {

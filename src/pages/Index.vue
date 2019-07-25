@@ -36,19 +36,28 @@ export default {
   //   // })
   // }
   created: function () {
-    let components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
-    let grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+    let components
+    try {
+      components = JSON.parse(JSON.stringify(this.$store.getters['components/getComponents'](this.id)))
+    } catch (e) {}
+
+    let grid
+    try {
+      grid = JSON.parse(JSON.stringify(this.$store.getters['grids/getGrid'](this.id)))
+    } catch (e) {
+
+    }
 
     if (components) { this.components = components }
 
     if (grid) { this.grid = grid }
 
-    let interval = setInterval(function () {
-      debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
-      this.grid.layouts.lg.push({ x: 5, y: 1, w: 7, h: 4, i: '6' })
-      debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
-      clearInterval(interval)
-    }.bind(this), 5000)
+    // let interval = setInterval(function () {
+    //   debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
+    //   this.grid.layouts.lg.push({ x: 5, y: 1, w: 7, h: 4, i: '6' })
+    //   debug('setInterval', JSON.parse(JSON.stringify(this.grid['layouts']['lg'])))
+    //   clearInterval(interval)
+    // }.bind(this), 5000)
   },
 
   data () {
@@ -64,7 +73,7 @@ export default {
               i: '1'
 
             },
-            { x: 5, y: 0, w: 5, h: 4, i: '2' },
+            { x: 5, y: 0, w: 2, h: 4, i: '2' },
             {
               x: 10,
               y: 0,
@@ -97,7 +106,7 @@ export default {
 
         cols: 12,
         // breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-        // colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
+        colsAll: { lg: 12, md: 8, sm: 6, xs: 4, xxs: 2 },
 
         isDraggable: false,
         isResizable: false,
@@ -106,11 +115,23 @@ export default {
       components: {
         '1': [{
           id: 0,
-          component: 'admin-lte-box-solid'
+          component: 'admin-lte-box',
+          options: {
+            type: 'box-success',
+            title: 'MyBox',
+            text: 'box content'
+          }
           // defaultSize: 2
         }],
         '2': [
-          { id: 2, slot: 'hello', defaultSize: 2 }
+          {
+            id: 2,
+            component: 'admin-lte-small-box',
+            // options: {
+            //   bg: 'bg-primary'
+            // },
+            defaultSize: 2
+          }
         ],
         '3': [{
           component: 'q-btn',
@@ -141,12 +162,12 @@ export default {
           // componentProps: "round color: 'primary'"
         }],
         '5': [{
-          // component: 'admin-lte-box-solid'
+          // component: 'admin-lte-box'
           component: 'TestTest'
           // defaultSize: 2
         }],
         '6': [{
-          // component: 'admin-lte-box-solid'
+          // component: 'admin-lte-box'
           component: 'SecondSecond'
           // defaultSize: 2
         }]
