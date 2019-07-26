@@ -68,12 +68,14 @@ export default {
           'lg': [
             { x: 0,
               y: 0,
-              w: 5,
-              h: 4,
+              w: 2,
+              h: 20,
               i: '1'
 
             },
-            { x: 5, y: 0, w: 2, h: 4, i: '2' },
+            {
+              x: 2, y: 0, w: 8, h: 20, i: '2'
+            },
             {
               x: 10,
               y: 0,
@@ -88,14 +90,14 @@ export default {
               h: 4,
               i: '4',
               immobile: true
-            },
-            { x: 0,
-              y: 1,
-              w: 5,
-              h: 4,
-              i: '5'
-
             }
+            // { x: 0,
+            //   y: 1,
+            //   w: 5,
+            //   h: 4,
+            //   i: '5'
+            //
+            // }
             // { x: 5, y: 1, w: 7, h: 4, i: '6' }
           ]
         },
@@ -114,28 +116,36 @@ export default {
       },
       components: {
         '1': [{
-          id: 0,
-          component: 'admin-lte-box',
-          options: {
-            type: 'box-success',
-            title: 'MyBox',
-            body: {
-              text: 'box content'
-            },
-            footer: false
-          }
-          // defaultSize: 2
+          id: 1,
+          component: 'admin-lte-events'
         }],
-        '2': [
-          {
-            id: 2,
-            component: 'admin-lte-small-box',
-            // options: {
-            //   bg: 'bg-primary'
-            // },
-            defaultSize: 2
-          }
-        ],
+        '2': [{
+          id: 2,
+          component: 'admin-lte-fullcalendar'
+        }],
+        // '1': [{
+        //   id: 0,
+        //   component: 'admin-lte-box',
+        //   options: {
+        //     type: 'box-success',
+        //     title: 'MyBox',
+        //     body: {
+        //       text: 'box content'
+        //     },
+        //     footer: false
+        //   }
+        //   // defaultSize: 2
+        // }],
+        // '2': [
+        //   {
+        //     id: 2,
+        //     component: 'admin-lte-small-box',
+        //     // options: {
+        //     //   bg: 'bg-primary'
+        //     // },
+        //     defaultSize: 2
+        //   }
+        // ],
         '3': [{
           component: 'q-btn',
           // defaultSize: 2,
@@ -163,17 +173,17 @@ export default {
             click: 'disableEdit'
           }
           // componentProps: "round color: 'primary'"
-        }],
-        '5': [{
-          // component: 'admin-lte-box'
-          component: 'TestTest'
-          // defaultSize: 2
-        }],
-        '6': [{
-          // component: 'admin-lte-box'
-          component: 'SecondSecond'
-          // defaultSize: 2
         }]
+        // '5': [{
+        //   // component: 'admin-lte-box'
+        //   component: 'TestTest'
+        //   // defaultSize: 2
+        // }],
+        // '6': [{
+        //   // component: 'admin-lte-box'
+        //   component: 'SecondSecond'
+        //   // defaultSize: 2
+        // }]
       }
     }
   },
