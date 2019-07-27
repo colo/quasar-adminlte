@@ -1,9 +1,19 @@
 <template>
-  <div class="small-box bg-aqua" :class="(bg) ? bg : ''" :id="id">
+  <div class="small-box" :class="(bg) ? bg : ''" :id="id">
     <div class="inner">
-      <h3>150</h3>
+      <component
+        v-if="inner.component"
+        :is="inner.component.type"
+        v-bind="inner.component.options"
+        v-dynamic-events="(inner.component.events) ? inner.component.events : {}"
+      >
+      </component>
+      <template v-else-if="inner.text">
+        <h3>{{inner.header}}</h3>
 
-      <p>New Orders</p>
+        <p>{{inner.text}}</p>
+      </template>
+      <slot v-else></slot>
     </div>
     <div class="icon">
       <i :class="icon"></i>
@@ -53,6 +63,19 @@ export default {
     icon: {
       type: [String],
       default: 'fa fa-envelope'
+    },
+    inner: {
+      type: [Object],
+      default: function () {
+        return {
+          component: undefined,
+          inner: {
+            text: undefined,
+            header: undefined
+          }
+        }
+      }
+
     }
     // text: {
     //   type: [String],

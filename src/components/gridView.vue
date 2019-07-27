@@ -29,7 +29,7 @@
           :rowHeight="props.rowHeight"
           :isDraggable="viewGrid.isDraggable"
           :isResizable="viewGrid.isResizable"
-          :className="(viewGrid.preview) ? 'grid-item' : '' "
+          :className="(viewGrid.preview !== true) ? 'grid-item' : '' "
           :cols="props.cols"
           :heightFromChildren="false"
           :maxRows="props.maxRows"
@@ -101,7 +101,7 @@
 
           <q-icon
             name="fa fa-trash-alt"
-            v-if="viewGrid.preview && !item.immobile"
+            v-if="viewGrid.preview !== true && !item.immobile"
             @click="removeItem(index)"
             style="position: absolute; bottom: 0px; left: 4px;"
           />
@@ -431,7 +431,8 @@ export default {
       debug('disableGrid')
 
       let grid = this.viewGrid
-      grid.preview = grid.isDraggable = grid.isResizable = !grid.preview
+      grid.preview = !grid.preview
+      grid.isDraggable = grid.isResizable = !(grid.preview)
       // grid.isDraggable = !grid.isDraggable
       // grid.isResizable = !grid.isResizable
       // grid.contenteditable = !grid.contenteditable
