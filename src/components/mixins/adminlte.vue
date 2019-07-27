@@ -8,6 +8,9 @@ const debug = Debug('components:AdminLte')
 // import Vue from 'vue';
 // export const EventBus = new Vue();
 
+import { dom } from 'quasar'
+const { ready } = dom
+
 export default {
   name: 'admin-lte-mixin',
 
@@ -21,9 +24,12 @@ export default {
     }
   },
 
-  mounted () {
-    this.admin_lte_ui()
+  mounted: function(){
+    ready(this.admin_lte_ui())
   },
+  // mounted () {
+  //   this.admin_lte_ui()
+  // },
   updated: function () {
     this.admin_lte_ui()
   },

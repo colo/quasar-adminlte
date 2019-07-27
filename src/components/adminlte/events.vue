@@ -70,6 +70,12 @@
 // import 'moment'
 // import 'fullcalendar'
 
+import * as Debug from 'debug'
+const debug = Debug('components:AdminLte:Events')
+
+import { dom } from 'quasar'
+const { ready } = dom
+
 export default {
   name: 'admin-lte-events',
 
@@ -124,10 +130,12 @@ export default {
   // },
 
   mounted: function () {
-  //
-    let self = this
+    ready(this.admin_lte_ui())
+  },
 
-    function init_events (ele) {
+  methods: {
+
+    init_events: function (ele) {
       ele.each(function () {
         // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
         // it doesn't need to have a start or end
@@ -145,62 +153,49 @@ export default {
           revertDuration: 0 //  original position after the drag
         })
       })
+    },
+    admin_lte_ui: function () {
+      let self = this
+
+      self.init_events($('#external-events div.external-event'))
+
+      /* ADDING EVENTS */
+      var currColor = '#3c8dbc' // Red by default
+      // Color chooser button
+      var colorChooser = $('#color-chooser-btn')
+      $('#color-chooser > li > a').click(function (e) {
+        e.preventDefault()
+        // Save color
+        currColor = $(this).css('color')
+        // Add color effect to button
+        $('#add-new-event').css({ 'background-color': currColor, 'border-color': currColor })
+      })
+      $('#add-new-event').click(function (e) {
+        e.preventDefault()
+        // Get value and make sure it is not null
+        var val = $('#new-event').val()
+        if (val.length === 0) {
+          return
+        }
+
+        // Create events
+        var event = $('<div />')
+        event.css({
+          'background-color': currColor,
+          'border-color': currColor,
+          'color': '#fff'
+        }).addClass('external-event')
+        event.html(val)
+        $('#external-events').prepend(event)
+
+        // Add draggable funtionality
+        self.init_events(event)
+
+        // Remove event from text input
+        $('#new-event').val('')
+      })
     }
 
-    init_events($('#external-events div.external-event'))
-
-    /* ADDING EVENTS */
-    var currColor = '#3c8dbc' // Red by default
-    // Color chooser button
-    var colorChooser = $('#color-chooser-btn')
-    $('#color-chooser > li > a').click(function (e) {
-      e.preventDefault()
-      // Save color
-      currColor = $(this).css('color')
-      // Add color effect to button
-      $('#add-new-event').css({ 'background-color': currColor, 'border-color': currColor })
-    })
-    $('#add-new-event').click(function (e) {
-      e.preventDefault()
-      // Get value and make sure it is not null
-      var val = $('#new-event').val()
-      if (val.length === 0) {
-        return
-      }
-
-      // Create events
-      var event = $('<div />')
-      event.css({
-        'background-color': currColor,
-        'border-color': currColor,
-        'color': '#fff'
-      }).addClass('external-event')
-      event.html(val)
-      $('#external-events').prepend(event)
-
-      // Add draggable funtionality
-      init_events(event)
-
-      // Remove event from text input
-      $('#new-event').val('')
-    })
-
-    // //   //console.log('this.$el', this.$el)
-    // $(this.$el).on('expanded.boxwidget', function () {
-    //   self.$emit('show', self.$el)
-    //   // console.log('expanded')
-    //   // this.showCollapsible(this.$el)
-    // })
-    //
-    // $(this.$el).on('collapsed.boxwidget', function () {
-    //   self.$emit('hide', self.$el)
-    //   // console.log('collapsed')
-    //   // this.hideCollapsible(this.$el)
-    // })
-    //
-    // $(this.$el).on('removed.boxwidget', function () {
-    //   self.$emit('remove', self.$el)
-    // })
   },
 
   data: function () {
